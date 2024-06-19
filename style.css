@@ -23,7 +23,9 @@
         box-sizing: border-box;
     }
     #iframe-pesquisa{
-        height: 800px;
+        display: block;
+        height: 700px;
+        margin-bottom: 100px;
     }
     footer{
         width: 100vw; height: 60px;
@@ -80,6 +82,17 @@ h2{
 #titulo p{
     font-size: 1.5em;
 }
+#btn{
+    display: none;
+    width:100%;
+    background-color: white;
+}
+a{
+    display:block;
+    width: 35px; height: 30px;
+    margin-left: 130px;
+}
+
 /* #logo{
     display: block;
     position: relative;
@@ -119,7 +132,7 @@ h2{
 
 .animate {
 	animation: animation;
-    animation-duration: 1600ms;
+    animation-duration: 2s;
     -moz-animation: animation;
     -moz-animation-duration: 1600ms;
 
@@ -127,7 +140,6 @@ h2{
 @keyframes animation {
     0%{
        transform: rotate(0deg);
-       transform: translateY(70px);
     }
     35%{
         transform: rotate(-35deg);
@@ -135,10 +147,7 @@ h2{
     75%{
         transform: rotate(35deg);
     }
-    80%{
-        transform: rotate(35deg);
-    }
     100%{
-        transform: translateY(70px);
+        transform: rotate(35deg);
     }
 }
