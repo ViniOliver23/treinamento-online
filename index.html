@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
-    <title>Smartphone para Todos</title>
+    <title>Document</title>
 </head>
 <body>
     <header id="header">   
@@ -12,13 +12,18 @@
             <div id="titulo">
                 <h1>TecnoFácil</h1>
                 <p><!--<img id="youtube-icon"src="./youtube.png">-->      @vinicius10k</p> 
+                <a id="link" href="https://chat.whatsapp.com/FsRb2IGjxdAGgxqWCGhNmkhttps://chat.whatsapp.com/FsRb2IGjxdAGgxqWCGhNmkhttps://chat.whatsapp.com/FsRb2IGjxdAGgxqWCGhNmk"> <img id="btn" src="./whatsapp.png" alt=""> </a>
             </div>
+         
     </header>
     <main id="main">
         
         <!-- <h2> Treinamento Digital</h2> -->
-        <section id="iframe-pesquisa">
-            <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSc6W5Li-qHBSQ6JaV3PE-DaMNxlAcfw_FzoGryZ1feMiACF2g/viewform?embedded=true" width="400" height="100%" frameborder="0" marginheight="0" marginwidth="0">Carregando…</iframe>
+        <section id="iframe-pesquisa">         
+                 <iframe 
+                id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSc6W5Li-qHBSQ6JaV3PE-DaMNxlAcfw_FzoGryZ1feMiACF2g/viewform?embedded=true" width="400" height="100%" frameborder="0" marginheight="0" marginwidth="0">
+                
+            </iframe>
         </section>
     </main>
     <footer>
@@ -29,8 +34,26 @@
 
     </footer>
     <!-- <script src="" -->
-    <script>
-       
-    </script>
+<script>
+    let btn =document.querySelector("#btn")
+    let link =document.querySelector("#link")
+
+    document.addEventListener('click', function() {
+      setTimeout =setTimeout(function(){
+
+        let x =true;
+        if(x){
+        let audio = new Audio('./notification.mp3');
+        audio.play().then(() => {
+                console.log('Audio is playing.');
+            }).catch(error => {
+                console.error('Error playing audio:', error);
+            });
+        }
+        btn.style.display= "block";
+        link.setAttribute("class","animate");
+      },30000)
+    })
+</script>
 </body>
 </html>
