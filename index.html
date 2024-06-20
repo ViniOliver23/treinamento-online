@@ -38,7 +38,7 @@
     let btn =document.querySelector("#btn")
     let link =document.querySelector("#link")
 
-    document.addEventListener('click', function() {
+     document.addEventListener('click', function() {
       setTimeout =setTimeout(function(){
 
         let x =true;
@@ -49,10 +49,13 @@
             }).catch(error => {
                 console.error('Error playing audio:', error);
             });
-        }
+        
         btn.style.display= "block";
         link.setAttribute("class","animate");
-      },30000)
+        }else{
+            console.log("Função já foi executada");
+        }
+      },2000)
     })
 </script>
 </body>
