@@ -1,0 +1,197 @@
+Trocar sua página inicial? … No momento, ela está definida como "Início". Você pode mudar essa opção a qualquer momento nas configurações.
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarefas</title>
+    <style>
+        *{margin: 0 ; padding: 0;} 
+        body {
+            font-family: Arial, sans-serif;
+            width: 100vw; height: 100vh;
+            background-color: rgb(240, 240, 240);
+        }
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+        }
+        form {
+            width: 75vw;
+            background-color: #ccc;
+            border-radius:17px;
+        
+            margin:20px auto;
+        }
+        form input, form textarea {
+            width:75vw;
+            height: 40px;
+            padding: 10px;
+            border-radius:17px;
+            border: 2px solid #ccc;
+            box-sizing: border-box;
+        }
+        form textarea{
+            margin: 20px 0;
+            height: 200px;
+        }
+        form input:focus, form textarea:focus{
+           border: 2px solid #d12d2d;
+           outline: none;
+           background-color: rgb(255, 255, 255);
+        }
+        form button {
+            padding: 10px 20px;
+            background-color: #007BFF; 
+            margin: 0 0 10px 10px;border-radius:17px;
+       
+            color: white;
+            border: none;
+            cursor: pointer;
+            
+        }
+        .post {
+            width: 75vw;
+            margin: 10px auto;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: end;
+        }
+        .post h2 {
+            margin: 0 0 10px 0;
+            color: #007BFF;
+            
+            display: inline-block;
+            float: left;
+        }
+        .post p {
+            margin: 40px 0 10px 0;
+            padding: 4px;
+            background-color: #e9e9e9;
+            text-align: justify;
+            box-sizing: border-box;
+        }
+        .post button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .post button.delete {
+            background-color: #28a742;
+        }
+    </style>
+</head>
+<body>
+    <h1>Tarefas</h1>
+    <form id="postForm">
+        <input type="hidden" id="postId" />
+        <input type="text" id="title" placeholder="Título da tarefa" required />
+        <textarea id="content" placeholder="Conteúdo" required></textarea>
+        <button type="submit">Criar </button>
+    </form>
+    <div id="posts"></div>
+    
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const postForm = document.getElementById('postForm');
+            const postIdInput = document.getElementById('postId');
+            const titleInput = document.getElementById('title');
+            const contentInput = document.getElementById('content');
+            const postsContainer = document.getElementById('posts');
+
+            function getPosts() {
+                return JSON.parse(localStorage.getItem('posts')) || [];
+            }
+
+            function savePosts(posts) {
+                localStorage.setItem('posts', JSON.stringify(posts));
+            }
+
+            function renderPosts() {
+                const posts = getPosts();
+                postsContainer.innerHTML = '';
+                posts.forEach((post, index) => {
+                    const postDiv = document.createElement('div');
+                    postDiv.className = 'post';
+                    postDiv.innerHTML = `
+                        <h2>${post.title}</h2>
+                        <p>${post.content}</p>
+                        <button onclick="editPost(${index})">Editar</button>
+                        <button class="delete" onclick="deletePost(${index})">Concluir</button>
+                    `;
+                    console.log(postDiv)
+                    postsContainer.prepend(postDiv);
+                });
+            }
+
+            function editPost(index) {
+                const posts = getPosts();
+                const post = posts[index];
+                postIdInput.value = index;
+                titleInput.value = post.title;
+                contentInput.value = post.content;
+            }
+
+            function deletePost(index) {
+                let posts = getPosts();
+                posts.splice(index, 1);
+                savePosts(posts);
+                renderPosts();
+            }
+
+            postForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = postIdInput.value;
+                const title = titleInput.value;
+                const content = contentInput.value;
+                const posts = getPosts();
+
+                if (id) {
+                    posts[id] = { title, content };
+                } else {
+                    posts.push({ title, content });
+                }
+
+                savePosts(posts);
+                renderPosts();
+                postForm.reset();
+            });
+
+            renderPosts();
+        });
+
+        function editPost(index) {
+            const posts = JSON.parse(localStorage.getItem('posts')) || [];
+            const post = posts[index];
+            document.getElementById('postId').value = index;
+            document.getElementById('title').value = post.title;
+            document.getElementById('content').value = post.content;
+        }
+
+        function deletePost(index) {
+            let posts = JSON.parse(localStorage.getItem('posts')) || [];
+            posts.splice(index, 1);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            document.getElementById('posts').innerHTML = '';
+            posts.forEach((post, index) => {
+                const postDiv = document.createElement('div');
+                postDiv.className = 'post';
+                postDiv.innerHTML = `
+                    <h2>${post.title}</h2>
+                    <p>${post.content}</p>
+                    <button onclick="editPost(${index})">Editar</button>
+                    <button class="delete" onclick="deletePost(${index})">Excluir</button>
+                `;
+                document.getElementById('posts').appendChild(postDiv);
+            });
+        }
+    </script>
+</body>
+</html>
