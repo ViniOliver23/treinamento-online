@@ -187,7 +187,7 @@ Trocar sua página inicial? … No momento, ela está definida como "Início". V
                     <h2>${post.title}</h2>
                     <p>${post.content}</p>
                     <button onclick="editPost(${index})">Editar</button>
-                    <button class="delete" onclick="deletePost(${index})">Excluir</button>
+                    <button class="delete" onclick="deletePost(${index})">Concluir</button>
                 `;
                 document.getElementById('posts').appendChild(postDiv);
             });
