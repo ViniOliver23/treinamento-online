@@ -6,7 +6,174 @@
   <title>Editor de Codódigo </title>
   <!--criado em 06/2024-->
   <style>
-    *{padding: 0; margin: 0;}
+    *{padding: 0; margin: 0;}<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal</title>
+    <style>
+        *{margin: 0;padding: 0;}
+        body{
+            width: 100vw; height: 100vh;
+        }
+        header{
+            width: 100%; height: 220px;
+            background-color: rgb(139, 147, 150);
+            overflow: hidden;
+            color: whitesmoke;
+        }
+        #cube{
+            position: absolute;
+            margin-top: -90px;
+            width: 90%; height: 320px;
+            background-color:rgb(53, 53, 53);
+            transform: rotate(5deg);
+            box-sizing: border-box;
+            
+        }
+        nav{
+            position: absolute;
+            z-index: 2;
+            display: flex;
+            flex-direction: row;
+            width: 100%; height: 250px;
+            padding: 80px 20px ;
+            box-sizing: border-box;
+        }
+        nav>img {
+            width: 70px; height: 70px;
+            border: 1px solid whitesmoke;
+            border-radius: 50%;
+        }
+        .info{
+            max-width: 185px;
+            margin-left: 20px;
+            margin-top: 20px;
+        }
+        #btn-menu{
+            width: 50px; height: 50px;
+            margin-top: 20px;
+            margin-right: 20px;
+            z-index: 5;
+            position: relative;
+            float: right;
+            background-color: whitesmoke; 
+            border-radius: 25% 25%;
+            color: black;
+        }
+
+        main{
+            width: 90%; height: 68vh;
+            padding-top: 30px;
+            margin: 0 auto;
+            /* background-color: #ccc; */
+            box-sizing: border-box;
+        }
+        #banner-servico{
+            width: 100%; min-height: 30px;
+            margin-top: 20px;
+            overflow: hidden;
+            overflow-x: scroll;
+        }
+        #table-services{
+            width: 227%; height: 120px;
+            justify-content: space-evenly;
+            display: flex;
+            flex-direction: row;
+        }
+        .services{
+            width: 100px ; height: 100px;
+            border-radius: 17px;
+            background-color: rgb(136, 136, 136);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <img src="./logo.png" alt="">
+            <div class="info">
+                <h1 id="nome">Name</h1>
+                <P>Desenvolvedor Front-End</P>
+                <p>html - css - javascript<p>
+            </div>
+            <div class="info">
+               
+            </div>
+        </nav>
+        
+        <div id="btn-menu" ></div>
+        <div id="cube"></div>
+    </header>
+
+    <main>
+        <h1 id="titulo-service">Serviços</h1>
+        <div id="banner-servico">
+            <div id="table-services">
+
+        
+
+            <section class="services">
+
+            </section>
+            <section class="services">
+
+            </section>
+            <section class="services">
+
+            </section>
+            <section class="services">
+
+            </section>
+            <section class="services">
+
+            </section>
+            <section class="services">
+
+            </section>
+            <section class="services">
+
+            </section>
+            
+       
+            
+        </div><!--table-services-->
+        </div><!--banner-serviço-->
+        
+    </main>
+    
+</body>
+<script>
+    // Obter a string de consulta da URL
+const queryString = window.location.search;
+
+// Criar um objeto URLSearchParams para facilitar a manipulação
+const urlParams = new URLSearchParams(queryString);
+
+// Obter valores dos parâmetros específicos
+const name = urlParams.get('name'); // "Joao"
+const age = urlParams.get('age'); // "30"
+const modo = urlParams.get('modo');
+console.log(name); // Joao
+console.log(age); // 30
+console.log(modo); //
+
+nome = document.querySelector("#nome");
+tituloService = document.querySelector("#titulo-service");
+
+tituloService .innerText= modo;
+nome.innerText= name;
+
+</script>
+</html>
+
+<!--
+https://api.whatsapp.com/send?phone=5513996625175&text=case%20hoje%20tem%20festa!
+
+file:///c%3A/xampp/htdocs/09index.html?age=22&name=transmor&modo=transportes
+
+-->
     .highlight{
       color: rgb(255, 214, 32);
       background-color: red;
