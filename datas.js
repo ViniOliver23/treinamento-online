@@ -22,7 +22,7 @@ var today = new Date();
   var faturas =[
     /*  - 2024 -  */
     /*Jul*/'130,26',
-    /*Ago*/'3',
+    /*Ago*/' ',
     /*Set*/'',
     /*Out*/'',
     /*Nov*/'',
