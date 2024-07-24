@@ -94,7 +94,7 @@ let faturaCPFL = document.querySelector("#CPFL-valor");
     <div>
     <div  class="box">
         <div class="container">
-        <img class="icon-pago" src="./img/fatura.png" alt="status">
+        <img class="icon-pago" src="./fatura.png" alt="status">
         <p> Total da Fatura :</p>
             <span id="CPFL-valor" class="valor">`+faturas[index]+`</span>
         </div><!--container-->
