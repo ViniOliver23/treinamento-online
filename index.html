@@ -3,61 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
-    <title>Document</title>
+    <link rel="stylesheet" href="./stylesConfg.css">
+    <title>controle</title>
 </head>
 <body>
-    <header id="header">   
-            <img id="logo" src="logo.png"  width="100%" alt="logo"> 
-            <div id="titulo">
-                <h1>TecnoFácil</h1>
-                <p><!--<img id="youtube-icon"src="./youtube.png">-->      @vinicius10k</p> 
-                <a id="link" href="https://chat.whatsapp.com/FsRb2IGjxdAGgxqWCGhNmk"> <img id="btn" src="./whatsapp.png" alt=""> </a>
-            </div>
-         
+    <header>
+        <h1>AV DOM PEDRO II, 286</h1>
+        <img onclick="audioClick()" id="btn-menu" src="./img/menu-aberto.png"  
+    width="40px" alt="menu">
+    <section id="menu">
+        <li>link1</li>
+        <li>link2</li>
+        <li>link3</li>
+    </section>
+        <p>11350-100 SAO VICENTE - SP</p>
+        <audio id="audio1" src="./audio/click-151673.mp3"></audio>
+        
     </header>
-    <main id="main">
-        
-        <!-- <h2> Treinamento Digital</h2> -->
-        <section id="iframe-pesquisa">         
-                 <iframe 
-                id="google-form" src="https://docs.google.com/forms/d/e/1FAIpQLSc6W5Li-qHBSQ6JaV3PE-DaMNxlAcfw_FzoGryZ1feMiACF2g/viewform?embedded=true" width="400" height="100%" frameborder="0" marginheight="0" marginwidth="0">
-                
-            </iframe>
-            <a id="creditos" href="https://br.freepik.com/autor/catalyststuff"> Art Design @catalyststuff</a>
+    <main>
+        <section id="tela">
+            <h2 id="cpfl-title">CPFL</h2>
+            <div id="CPFL" class="fornecedora">
+                <div id="slider">
+                </div><!--slider-->
+            </div>
+           
         </section>
-    </main>
-    <footer>
-        <div id="rodape">
-            <p>@vinicius10k 2024   |   Todos os direitos reservados.</p>
-            <!-- https://br.freepik.com/autor/catalyststuff -->
-        </div>
-
-    </footer>
-    <!-- <script src="" -->
-<script>
-    let btn =document.querySelector("#btn")
-    let link =document.querySelector("#link")
-
-     document.addEventListener('click', function() {
-      setTimeout =setTimeout(function(){
-
-        let x =true;
-        if(x){
-        let audio = new Audio('./notification.mp3');
-        audio.play().then(() => {
-                console.log('Audio is playing.');
-            }).catch(error => {
-                console.error('Error playing audio:', error);
-            });
         
-        btn.style.display= "block";
-        link.setAttribute("class","animate");
-        }else{
-            console.log("Função já foi executada");
-        }
-      },1000)
-    })
-</script>
+        <section id="tela">
+            <h2 id="sabesp-title">SABESP</h2>            
+            <div id="sabesp" class="fornecedora">
+                <div id="slider">
+                </div><!--slider-->
+            </div>
+        </section>
+        
+        
+
+        
+    </main>
+    
 </body>
+<script src="./jquery.js"></script>
+<script>
+   
+    $.ajax({
+       url: 'https://sheetdb.io/api/v1/bov3hw6tofrp0',
+       method: 'GET',
+       success: function(data) {
+
+        console.log(data)
+       }
+    });
+
+
+
+</script>
+<script src="./datas.js"></script>
+<script>
+    let onOff = "false";
+    function audioClick(){
+        let audio1 = document.querySelector("#audio1");
+        audio1.play();
+        
+        if(onOff=="false"){
+        $("#menu").css("border-radius","17px").css("width","250px").css("padding","10px").css("height","80px");
+        onOff="true";
+        }else{
+            $("#menu").css("width","10px").css("padding","0px").css("padding","0px").css("height","0px");
+            onOff="false";
+        }
+    }
+</script>
 </html>

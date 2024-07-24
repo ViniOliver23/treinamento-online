@@ -1,0 +1,171 @@
+*{margin: 0; padding: 0;}
+:root{
+    --azul: #369eda;
+    --azulBlack: #047cb8;
+}
+body{
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+    background-color:var(--azul);
+}
+header{
+    background-color: #2c2c2c;
+    width: 100%; height: 120px;
+    border-radius:0 0 25px 25px;
+    margin-bottom: 30px;
+    padding: 20px 0 0 15px;
+    box-sizing: border-box;
+}
+#menu{
+    position: relative;
+    float: right;
+    margin-right: -25px;
+    width: 10px; height: 10px;
+    background-color: whitesmoke;
+    border-radius: 50%;
+    transition: 400ms;
+    overflow: hidden;
+}
+li{
+    list-style-type: none;
+    font-size: 1.3em;
+}
+#btn-menu{
+    position: relative;
+    float: right;
+    margin: -20px 15px 0 0;
+    z-index: 2;
+}
+#btn-menu:hover{
+    transform: scale(1.1);
+}
+main{
+    display: block;
+}
+#tela{
+    width: 100%;
+    overflow-y: hidden;
+    font-family: 'Gill Sans',sans-serif;
+}
+#tela>h2{
+    margin: 0;
+    color: white;
+}
+.fornecedora{
+    display: block;
+    height: 300px;
+}
+#cpfl-title{
+    position: absolute;
+    padding:  15px 0 0 25px;
+}
+#sabesp-title{
+    position: absolute;
+    padding:  15px 0 0 25px;
+}
+.faturas{
+    position: relative;
+    width: 300px; height: 240px;
+    margin-top: 60px;
+    float: left;
+    box-sizing: border-box;
+    background: linear-gradient(to right, var(--azul),var(--azulBlack)); 
+
+}
+.icon-pago{
+    width: 80px;
+    float: right;
+    margin-right: 10px;
+}
+#div01{
+    width: 100%;
+    float: right;
+}
+#CPFL-kw{
+   
+    margin-right: 20px ;
+    margin-top:5px;
+    font-size: 1.1em;
+}
+.faturas p{
+    margin-top: 8px;
+   
+}
+
+#CPFL > h2{
+    position: absolute;
+    font-family: 'Gill Sans',sans-serif;
+    margin: 0;
+    background-color:#369eda;
+    width: 100%;
+    padding: 15px;
+    order: 5;
+}
+/* #bank2 > h2{
+    background-color: #22b17a;
+    ;
+}
+#bank2{
+    background-color: #22b17a;
+} */
+h1{
+    font-size: 1.5em;
+    margin-bottom: 4px;
+    font-family: arial;
+    display: block;
+    color: aliceblue;
+}
+h2{
+    color: white;
+    float: right;
+    margin: 10px 20px 0 0;
+}
+p{
+    color: white;
+    font-family: arial;
+}
+.box{
+    display: block;
+    width: 100%; height: 55px;
+    box-sizing: border-box;
+    padding: 10px;
+}
+.container{
+    display: block;
+    position: relative;
+    box-sizing: border-box;
+    padding: 35px 0 0 15px;
+}
+.valor{
+    font-size: 50px;
+    font-family: arial;
+    color: white;
+}
+
+/* .faturasPicpay{
+    position: relative;
+    display: inline-block;
+    width: 300px; height: 240px;
+    margin-top: 60px;
+    float: left;
+    box-sizing: border-box;
+    border-right: 1px solid #ccc; 
+    order: 1;
+    background: linear-gradient(to right,#22b17a,#1b9265);  
+} */
+
+@media screen and (max-width:600px) {
+    
+    :root{
+        --azul: #3191c9;
+        --azulBlack: #066fa3;
+    }
+    #tela{
+        width: 100%
+    }
+    
+    #bank1 > h2{
+        width: 100%;
+    }
+    
+}
