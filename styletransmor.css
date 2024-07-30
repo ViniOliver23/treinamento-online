@@ -1,0 +1,269 @@
+
+body{width: 100vw; height: 900px; overflow-x: hidden;
+font-family: 'Lucida Sans';}
+
+main{
+    width: 100vw; min-height: 50vh;
+}
+footer{
+    width: 100vw; height: 300px;
+}
+
+/*                         HEADER                         */
+header{
+    width: 100%; min-height: 70px;
+    padding: 0 8vw;
+    box-sizing: border-box;
+    position:absolute;
+    background: linear-gradient(to right, white,rgba(255, 255, 255,0.9));
+    /* background-color: rgb(242, 243, 241); */
+    z-index: 3;
+    display: flex;
+    flex-direction: row;
+}
+#header-geometric{
+    opacity: 97%;
+    position: absolute;
+    width: 120vw;  height:140px;
+    z-index: 1;
+}
+header .section-logo{
+    width: 20%; height: 100%;
+}
+#logo{
+    margin: 5px;
+    display: block;
+    padding: 5px 5px;
+    width: 12vw;
+    cursor: pointer;
+    /* background-color: #f2f3f1; */
+    /* border: 2px solid black; */
+    /* border-radius:0 22px; */
+    box-sizing: border-box;
+}
+.nav-bar{
+    width: 80%; height: 100px;
+    float: right;
+    
+}
+.nav-bar ul{
+    min-width: 200px; height: 100%;
+    display: block;
+    text-align: end;
+}
+    li{
+        display: inline-block;
+        list-style: none;
+        min-width: 10px; height: 100%;
+        padding:10px 10px 0 0;     
+        overflow: hidden;
+    }
+    /* li a{
+        background-color: var(--FontRed);
+        padding:5px 6px;
+    } */
+    
+    /* li:hover{
+        background-color: rgba(0, 0, 0,0.1);
+    } */
+    
+    /* Efeito css: HOVER nos links do menu, estrutura e aparencia. */
+
+    .linky{/*                    <a>...   </a>*/
+        display: block;
+        margin-top: 37px;
+        min-width: 10px; min-height: 10px;
+        cursor: pointer; 
+        font-size: 1.2em;
+        color:rgb(24, 24, 24);
+        text-decoration: none;  
+    }
+    .linky:hover{
+        margin-top: 42px;
+    }
+        .containner{
+            display: block;
+            position: relative;
+            float: right;
+            width: 205%; height: 35px;
+            background-color: transparent;
+            margin-top: -23px;
+        }
+        .containner:hover{
+            transform: translate(60%);
+            transition: 700ms;
+            
+        }
+        /* .index{
+            background-color: rgba(0, 0, 0,0.1);
+        } */
+        .page-atual{
+            transform: translate(60%);   
+        }
+            .barra{
+                width: 100%; height:3px;  
+                border-radius: 5px;
+                margin-top: 35px;
+                transform: translateX(-10%);
+                background: linear-gradient(to right,black 50%, transparent 50%) ;
+                /* box-shadow: 0px 0px 3px 0px black; */
+            }   
+    /* ------------------------------------------------------ */
+
+
+/*                       FIM HEADER                       */
+/* ------------------------------------------------------ */
+
+.main-layer{
+    width: 100vw; height: calc(100vh - 80px);
+    position: fixed;
+    z-index: 0;
+    /* background-color: greenyellow; */
+}
+.main-banner-null{
+    position: relative;
+    width: 100vw; min-height: 200vh;
+    /* background-color: rgba(0, 0, 0,0.3); */
+    background: linear-gradient(to top,rgba(0, 0, 0,0.7) ,transparent);
+   /* background-size: 100% 20%; */
+   background-repeat: no-repeat;
+   background-position-y: 80px;
+}
+.main-container{
+    width: 41.4vw; min-height: 23vw;
+    margin-top:20px;
+    align-content: center;
+    display: flex;
+    flex-direction: column;
+}
+.main-container button{
+    -webkit-animation: heartbeat 1.5s ease-in-out infinite both;
+    animation: heartbeat 1.5s ease-in-out infinite both;
+}
+.main-container button:hover{
+    transform: scale(1.1);
+    font-weight: bold;
+    /* border: 2px solid black; */
+    box-shadow: 1px 1px 2px 0px black;
+    -webkit-animation: none;
+	        animation: none;
+}
+#main-banner-cartaz{
+    position: fixed;
+    width: 100vw; height: 100vh;
+    background-image: url(../midias/truck01.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-y: -5vw;
+    transition: 3s;
+}
+#iframe-map{
+    width: 30vw; height: 27vw;
+    display: block;
+    border: 2px solid black;
+}
+
+/* #mural{
+    background-color: #f0cb3f;
+    background:linear-gradient(to bottom,#f2f3f1,#f0cb3f )
+} */
+ .section-2{
+    background-color: white;
+ }
+#main-banner-info{
+    background-color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+    overflow: hidden;
+}
+.text-container{
+    font-size: 1.3em;
+    text-align: justify;
+}
+.text-container p{
+    border-radius: 0 22px 22px 22px ;
+    padding: 40px;
+    margin: 10% auto;
+    box-sizing: border-box;
+    display: block;
+    width: 100%;
+}
+span{
+    background-color:  #d40707;
+}
+.main-intro{
+ text-align: center;
+
+}
+#logo02{
+    margin-bottom: 30px;
+}
+#spreader{
+    position: relative;
+    transform: translateY(0vw);
+    transition: 5s;
+}
+#img-spreader{
+    width: 35vw;
+}
+.div-container{
+    position: relative;
+    margin: -25px 0 0 10px;
+    width: 33vw; height: 15vw;
+    background-color: var(--FontRed);
+    color: whitesmoke;
+}
+#spreader h1{
+    position: absolute;
+}
+.main03{
+    width:100; height: 400px;
+    background-color: white;
+}
+h1{
+    display: inline-block;
+    background-color:rgba(0, 0, 0,0.5);
+}
+
+
+@media screen and (max-width:500px) {
+    header{
+        background-color: #f2f3f1;
+        margin-top: -80px;
+    }
+    header .nav-bar{
+        display: none;
+    }
+    #header-geometric{
+        display: none;
+    }
+    #logo{
+        width: 30vw;
+    }
+    h1{
+        font-size: 1em;
+        width: 35vw;
+        margin-left: 12px;
+    }
+    .main-banner-null{
+        margin-top: -300px;
+    }
+    #main-banner-cartaz{
+        height: 80vw;
+        position: initial;
+        margin-top: 80px;
+        background-color: #d40707;
+        background-image: url(../midias/caminhaoss.jpg);
+        background-position-y: 20px;        
+    }
+    #main-banner-info{
+        flex-direction: column;
+    }
+    .main-intro{
+        opacity: 0;
+    }
+    .text-container p{
+        width: 100%; margin: 0;
+    }
+}
