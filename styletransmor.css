@@ -151,7 +151,7 @@ header .section-logo{
 #main-banner-cartaz{
     position: fixed;
     width: 100vw; height: 100vh;
-    background-image: url(../midias/truck01.jpg);
+    background-image: url(./truck01.jpg);
     background-size: cover;
     background-repeat: no-repeat;
     background-position-y: -5vw;
@@ -254,7 +254,7 @@ h1{
         position: initial;
         margin-top: 80px;
         background-color: #d40707;
-        background-image: url(../midias/caminhaoss.jpg);
+        background-image: url(./caminhaoss.jpg);
         background-position-y: 20px;        
     }
     #main-banner-info{
