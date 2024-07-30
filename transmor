@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styletransmor.css">
+    <link rel="stylesheet" href="./frameworktransmor.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
+
+    <title>Transmor - Transportadora</title>
+</head>
+<body class="lato-bold">
+    <!-- <img id="header-geometric" class="fixed" src="./midias/faixa2.png" alt=""> -->
+    <header >
+       
+        <section class="section-logo">
+            <img id="logo" src="./midias/logo.png" alt="logomarca">
+        </section>
+        <section class="nav-bar tilt-warp">
+            <ul><!--Links-->
+                <li class="index">
+                    <a class="linky" href="https://www.google.com">
+                    <p>Home</p> 
+                    <div class="containner">
+                        <div class="barra"></div>
+                    </div>
+                    </a>
+                </li> <!--Home-->
+                <li>
+                    <a class="linky" href="https://www.google.com">
+                    <p>Quem Somos</p> 
+                    <div class="containner">
+                        <div class="barra"></div>
+                    </div>
+                    </a>
+                </li><!--Quem Somos-->
+                <li>
+                    <a class="linky" href="https://www.google.com">
+                    <p>Serviços</p> 
+                    <div class="containner">
+                        <div class="barra"></div>
+                    </div>
+                    </a>
+                </li><!--Serviços-->
+                <li>
+                    <a class="linky" href="https://www.google.com">
+                    <p>Conteiners</p> 
+                    <div class="containner">
+                        <div class="barra"></div>
+                    </div>
+                    </a>
+                </li><!--Conteiners-->
+                <li>
+                    <a class="linky" href="https://www.google.com">
+                    <p>Certificado</p> 
+                    <div class="containner">
+                        <div class="barra"></div>
+                    </div>
+                    </a>
+                </li><!--Certificado-->
+                <li>
+                    <a class="linky" href="https://www.google.com">
+                    <p>Contato</p> 
+                    <div class="containner">
+                        <div class="barra"></div>
+                    </div>
+                    </a>
+                </li><!--Contato-->
+            </ul><!--Links-->
+        </section>
+    </header>
+    <main>
+        <section id="main-banner-cartaz" class="container-h400">
+    
+        </section>
+
+        
+        <div class="zindex-1 text-white ">  
+            <section class="main-banner-null padding">
+               
+                <h1 class="padding-h1 bounce-left">Realizamos transporte rodoviário em todo o Brasíl </h1>
+                <div class="main-container">
+                    <button >FALE CONOSCO</button>
+                </div>     
+                <section class="main-intro">
+                    <img id="logo02" src="./midias/logo.png" alt="logo">
+                    <!-- <P class="inline-block ">Ltda</P> -->
+                    <p class="f-size20 padding10 text-justify">A <span> Transmor Transportes Rodoviários Ltda </span>, localizada no Porto de Santos,  atua no setor de transporte rodoviário de cargas nos principais portos e aeroportos do Brasil, contando com uma equipe de profissionais especializados.</p>
+                    <!-- <p class="f-size20 padding10 text-justify">Trabalhamos com os diversos tipos de contêiners, visando atender da melhor maneira possível nossos clientes.</p> -->
+
+                    <p class="f-size20 padding10 text-justify">Trabalhamos com variedades de contêineres, buscando atender nossos clientes da forma mais eficiente e satisfatória possível.</p>
+                </section> 
+
+            </section>
+            <section class="banner main03">
+                
+            </section>
+            
+
+            
+
+            <!-- <section id="main-banner-info" class="container-h400 ">
+                <div class="w50 text-container">
+                    <p>A <span>Transmor Transportes Rodoviários Ltda</span>, 
+                    localizada no Porto de Santos, atua no setor de transporte rodoviário de cargas,
+                    contando com uma equipe de profissionais especializados.</p>
+                </div>     
+                <div class="w50 center">
+                    <div id="iframe-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14585.585825606862!2d-46.414896!3d-23.946417!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce1bbde6e90bc9%3A0x693a1549c6a880b3!2sR.%20Frei%20Gaspar%2C%204401%20-%20Cidade%20N%C3%A1utica%2C%20S%C3%A3o%20Vicente%20-%20SP%2C%2011350-000!5e0!3m2!1spt-BR!2sbr!4v1721411627348!5m2!1spt-BR!2sbr" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe> 
+                    </div>
+                </div> 
+            </section>
+
+            <section class="section-2 banner">
+                <div id="spreader">
+                    <img id="img-spreader" src="./midias/spreader.png" alt="">
+                    <div class="div-container">
+                        <h1 class="slide-in-blurred-left"> Dispomos de diversos tipos de contêineres com diferentes medidas."</h1>
+                    </div>
+                </div>
+            </section> -->
+        </div><!--zindex-1-->
+
+        <!-- <p>A Transmor Transportes Rodoviários Ltda, situada no Porto de Santos, atua no ramo de Transporte Rodoviário de cargas, contando com equipe profissional especializada.</p>
+
+        <p>Interação efetiva em todas as ações necessárias nas operações de exportação e importação.</p>
+
+        <p>Trabalhamos com os diversos tipos de conteiners, visando atender da melhor maneira possível nossos clientes.</p>
+        <p>Atendimento necessário no caso de danos aos bens transportados; exclusivo sistema global de prevenção de sinistros em âmbito Nacional; serviço de assistência 24 horas carga e descarga nos principais portos do Brasil; profissionais especializados para acompanhar os serviços de carga e descarga nos principais portos e aeroportos do Brasil; Rede nacional de vistoriadores de sinistros, interligados eletronicamente com agilidade na regulação de sinistro;</p> -->
+    </div><!----->
+    </main>
+
+    <footer>
+        
+    </footer>
+    
+    
+</body>
+<script>
+
+    function spreaderActive(){
+        let spreader = document.getElementById("spreader");
+    spreader.style.transition = "8s";
+    spreader.style.transform = "translateY(-42vw)";
+    }
+    
+    setTimeout(spreaderActive,3000)
+
+</script>
+</html>
