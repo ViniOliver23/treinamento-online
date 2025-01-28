@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Câmera com Filtro de Cor</title>
+    <title>Câmera com Filtro e Imagem Original</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        /* Estilo para o topo da página com a imagem original */
+        .top-image {
+            width: 100%;
+            height: 200px;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMDUfO3KnH5fj69jfeNgs7Pnl1Ud6TXyZ0qRFLbNzwOxDRgwP62Zp5kYcl&s=10');
+            background-position: left;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
         video {
             width: 100%;
             max-width: 600px;
@@ -15,13 +27,17 @@
             align-items: center;
             margin: 20px;
         }
-        /* Filtro para realçar cores para daltonismo */
+        /* Filtro aplicado à imagem da câmera */
         .color-enhance {
             filter: contrast(150%) saturate(200%) brightness(90%) hue-rotate(180deg);
         }
     </style>
 </head>
 <body>
+    <!-- Exibe a imagem original no topo -->
+    <div class="top-image"></div>
+
+    <!-- Seção para selecionar a câmera e exibir o vídeo -->
     <div class="camera-container">
         <select id="cameraSelect"></select>
         <video id="videoElement" autoplay></video>
@@ -32,23 +48,40 @@
         const cameraSelect = document.getElementById('cameraSelect');
 
         async function getCameras() {
-            const devices = await navigator.mediaDevices.enumerateDevices();
-            const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            cameraSelect.innerHTML = '';
-            videoDevices.forEach((device, index) => {
-                const option = document.createElement('option');
-                option.value = device.deviceId;
-                option.textContent = device.label || `Câmera ${index + 1}`;
-                cameraSelect.appendChild(option);
-            });
-            startCamera(videoDevices[0].deviceId);  // Inicia com a primeira câmera disponível
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                if (videoDevices.length === 0) {
+                    console.error('Nenhuma câmera encontrada!');
+                    return;
+                }
+
+                cameraSelect.innerHTML = '';
+                videoDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.textContent = device.label || `Câmera ${index + 1}`;
+                    cameraSelect.appendChild(option);
+                });
+
+                // Tenta iniciar a segunda câmera, se disponível
+                const selectedDeviceId = videoDevices.length > 1 ? videoDevices[1].deviceId : videoDevices[0].deviceId;
+                startCamera(selectedDeviceId);
+            } catch (error) {
+                console.error('Erro ao acessar as câmeras:', error);
+            }
         }
 
         async function startCamera(deviceId) {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { deviceId: { exact: deviceId } }
-            });
-            videoElement.srcObject = stream;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: deviceId } }
+                });
+                videoElement.srcObject = stream;
+            } catch (error) {
+                console.error('Erro ao iniciar a câmera:', error);
+            }
         }
 
         cameraSelect.addEventListener('change', (event) => {
@@ -56,7 +89,7 @@
             startCamera(selectedDeviceId);
         });
 
-        // Adiciona o filtro para melhorar a percepção de cores
+        // Adiciona o filtro à imagem da câmera
         videoElement.classList.add('color-enhance');
 
         getCameras();
