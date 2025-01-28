@@ -1,162 +1,83 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Teste de Câmera</title>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câmera com Marcações</title>
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-        margin: 0;
-        padding: 0;
-        position: relative;
-      }
-      video {
-        width: 100%;
-        max-width: 400px;
-        margin-top: 20px;
-        border: 2px solid #000;
-      }
-      .info {
-        margin-top: 20px;
-        font-size: 16px;
-        color: #555;
-      }
-      #photo {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        max-width: 150px;
-        max-height: 150px;
-        border-radius: 10px;
-        border: 2px solid #000;
-        display: none;
-      }
-      .photo-caption {
-        font-size: 18px;
-        font-weight: bold;
-        color: #555;
-        margin-top: 10px;
-        display: none;
-      }
-      #capture-button {
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-top: 20px;
-      }
-      #capture-button:hover {
-        background-color: #0056b3;
-      }
-      #overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 100;
-        color: white;
-        font-size: 20px;
-      }
-      #overlay button {
-        padding: 10px 20px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        font-size: 18px;
-        cursor: pointer;
-      }
-      #overlay button:hover {
-        background-color: #218838;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Teste de Câmera</h1>
-    <video id="video" autoplay playsinline></video>
-    <div class="info">Se a câmera não abrir, verifique as permissões do navegador.</div>
-    <img id="photo" alt="Foto tirada" />
-    <div id="photo-caption" class="photo-caption">Foto tirada</div>
-
-    <!-- Overlay de Permissão -->
-    <div id="overlay">
-      <div>
-        <p>Por favor, permita o acesso à câmera.</p>
-        <button id="permit-access">Permitir Câmera</button>
-      </div>
-    </div>
-
-    <script>
-      let currentStream = null;
-      const videoElement = document.getElementById("video");
-      const photoElement = document.getElementById("photo");
-      const photoCaptionElement = document.getElementById("photo-caption");
-      const overlay = document.getElementById("overlay");
-      const permitButton = document.getElementById("permit-access");
-
-      // Função para acessar a câmera
-      async function startCamera() {
-        try {
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: "environment" }, // Usando a câmera traseira
-            audio: false,
-          });
-
-          currentStream = stream;
-          videoElement.srcObject = stream;
-          overlay.style.display = "none"; // Esconde a sobreposição quando a câmera for acessada
-        } catch (error) {
-          console.error("Erro ao acessar a câmera:", error);
-          alert("Não foi possível acessar a câmera. Verifique as permissões.");
+        #video {
+            width: 100%;
+            height: auto;
         }
-      }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .circle {
+            border: 2px solid red;
+            border-radius: 50%;
+            position: absolute;
+            top: 45%;
+            left: 45%;
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" autoplay></video>
+    <canvas id="canvas"></canvas>
+    <div class="circle"></div>
+    
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
 
-      // Função para capturar uma foto do vídeo
-      function capturePhoto() {
-        const canvas = document.createElement("canvas");
-        const context = canvas.getContext("2d");
+        // Acessar a câmera
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+                video.onloadedmetadata = () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                };
+            } catch (error) {
+                console.error('Erro ao acessar a câmera:', error);
+            }
+        }
 
-        // Ajustando as dimensões do canvas
-        canvas.width = videoElement.videoWidth;
-        canvas.height = videoElement.videoHeight;
+        // Desenhar sobre a câmera
+        function draw() {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            // Marcação do círculo central
+            ctx.beginPath();
+            ctx.arc(canvas.width / 2, canvas.height / 2, 50, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'red';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            requestAnimationFrame(draw);
+        }
 
-        // Desenhando o vídeo no canvas
-        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        // Capturar o que está no círculo central
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-        // Convertendo o canvas para uma imagem
-        const dataUrl = canvas.toDataURL("image/png");
-        photoElement.src = dataUrl;
-        photoElement.style.display = "block"; // Exibindo a imagem
+            // Verifica se o clique foi dentro do círculo central
+            const distance = Math.sqrt(Math.pow(x - canvas.width / 2, 2) + Math.pow(y - canvas.height / 2, 2));
+            if (distance <= 50) {
+                alert("Você clicou dentro do círculo!");
+            }
+        });
 
-        // Exibindo a mensagem de "Foto tirada"
-        photoCaptionElement.style.display = "block";
-      }
-
-      // Função para pedir permissão e iniciar a câmera
-      permitButton.addEventListener("click", () => {
-        startCamera(); // Chama a função que acessa a câmera
-      });
-
-      // Capturando a foto automaticamente assim que a câmera está funcionando
-      videoElement.addEventListener("playing", () => {
-        capturePhoto(); // Captura a foto assim que o vídeo começa a tocar
-      });
-
-      // Se a página for recarregada, tenta acessar a câmera
-      window.onload = () => {
-        overlay.style.display = "flex"; // Exibe a sobreposição se a câmera ainda não estiver ativada
-      };
+        // Iniciar a câmera
+        startCamera();
+        draw();
     </script>
-  </body>
+</body>
 </html>
