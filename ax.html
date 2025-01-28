@@ -89,8 +89,6 @@
     <img id="photo" alt="Foto tirada" />
     <div id="photo-caption" class="photo-caption">Foto tirada</div>
 
-    <button id="capture-button">Tirar Foto</button>
-
     <!-- Overlay de Permissão -->
     <div id="overlay">
       <div>
@@ -104,7 +102,6 @@
       const videoElement = document.getElementById("video");
       const photoElement = document.getElementById("photo");
       const photoCaptionElement = document.getElementById("photo-caption");
-      const captureButton = document.getElementById("capture-button");
       const overlay = document.getElementById("overlay");
       const permitButton = document.getElementById("permit-access");
 
@@ -115,6 +112,7 @@
             video: { facingMode: "environment" }, // Usando a câmera traseira
             audio: false,
           });
+
           currentStream = stream;
           videoElement.srcObject = stream;
           overlay.style.display = "none"; // Esconde a sobreposição quando a câmera for acessada
@@ -150,14 +148,14 @@
         startCamera(); // Chama a função que acessa a câmera
       });
 
-      // Capturando a foto ao clicar no botão
-      captureButton.addEventListener("click", capturePhoto);
+      // Capturando a foto automaticamente assim que a câmera está funcionando
+      videoElement.addEventListener("playing", () => {
+        capturePhoto(); // Captura a foto assim que o vídeo começa a tocar
+      });
 
       // Se a página for recarregada, tenta acessar a câmera
       window.onload = () => {
-        if (currentStream === null) {
-          overlay.style.display = "flex"; // Exibe a sobreposição se a câmera ainda não estiver ativada
-        }
+        overlay.style.display = "flex"; // Exibe a sobreposição se a câmera ainda não estiver ativada
       };
     </script>
   </body>
