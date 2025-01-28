@@ -47,6 +47,17 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.7); /* Cor escura para o fundo */
       z-index: 10;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .overlay-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      width: 80%;
     }
     .focus-box {
       position: absolute;
@@ -84,6 +95,18 @@
       left: 50%;
       top: 0;
     }
+    button {
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
   </style>
 </head>
 <body>
@@ -95,7 +118,15 @@
   <div class="color-info" id="color-info"></div>
   <img id="photo" alt="Foto tirada">
 
-  <div class="overlay"></div>
+  <!-- Tela de sobreposição -->
+  <div id="overlay" class="overlay">
+    <div class="overlay-content">
+      <h2>Permitir acesso à câmera</h2>
+      <p>Para continuar, por favor, permita o acesso à sua câmera.</p>
+      <button id="allow-button">Permitir acesso</button>
+    </div>
+  </div>
+
   <div class="focus-box"></div>
   <div class="focus-lines">
     <div class="horizontal-line"></div>
@@ -107,7 +138,9 @@
     let videoElement = document.getElementById('video');
     let photoElement = document.getElementById('photo');
     let colorInfoElement = document.getElementById('color-info');
-    
+    let overlayElement = document.getElementById('overlay');
+    let allowButton = document.getElementById('allow-button');
+
     // Função para iniciar a câmera
     async function startCamera(camera = 'environment') {
       try {
@@ -178,17 +211,14 @@
       colorInfoElement.style.color = color;
     }
 
-    // Inicia a câmera ao carregar a página, com a opção de escolher a câmera traseira
-    window.onload = () => startCamera('environment');
+    // Função para permitir o acesso à câmera
+    allowButton.addEventListener('click', () => {
+      // Remove a tela de sobreposição
+      overlayElement.style.display = 'none';
 
-    // Função para alternar entre a câmera frontal e traseira
-    function toggleCamera() {
-      if (currentStream) {
-        let videoTrack = currentStream.getVideoTracks()[0];
-        let facingMode = videoTrack.getSettings().facingMode === 'environment' ? 'user' : 'environment';
-        startCamera(facingMode);
-      }
-    }
+      // Inicia a câmera
+      startCamera('environment');
+    });
   </script>
 </body>
 </html>
