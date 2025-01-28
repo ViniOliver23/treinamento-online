@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Câmera com Marcações</title>
+    <title>Câmera com Marcações e Cor Central</title>
     <style>
         #video {
             width: 100%;
@@ -24,23 +24,81 @@
             width: 100px;
             height: 100px;
         }
+        #colorDisplay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 16px;
+        }
+        #cameraSelect {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
     <video id="video" autoplay></video>
     <canvas id="canvas"></canvas>
     <div class="circle"></div>
-    
+    <div id="colorDisplay">Cor: --</div>
+    <select id="cameraSelect"></select>
+
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
+        const colorDisplay = document.getElementById('colorDisplay');
+        const cameraSelect = document.getElementById('cameraSelect');
+        let currentStream = null;
 
-        // Acessar a câmera
-        async function startCamera() {
+        // Acessar câmeras disponíveis
+        async function getCameras() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                // Preenche o select com as câmeras
+                videoDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.text = device.label || `Câmera ${index + 1}`;
+                    cameraSelect.appendChild(option);
+                });
+
+                // Seleciona a primeira câmera por padrão
+                if (videoDevices.length > 0) {
+                    cameraSelect.value = videoDevices[0].deviceId;
+                    startCamera(videoDevices[0].deviceId);
+                }
+
+                cameraSelect.addEventListener('change', (event) => {
+                    const selectedCameraId = event.target.value;
+                    startCamera(selectedCameraId);
+                });
+            } catch (error) {
+                console.error('Erro ao listar as câmeras:', error);
+            }
+        }
+
+        // Iniciar a câmera selecionada
+        async function startCamera(deviceId) {
+            // Parar o stream atual (se existir)
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: deviceId } }
+                });
+
                 video.srcObject = stream;
+                currentStream = stream;
                 video.onloadedmetadata = () => {
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
@@ -62,22 +120,47 @@
             requestAnimationFrame(draw);
         }
 
-        // Capturar o que está no círculo central
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        // Capturar a cor dentro do círculo central
+        function getColorAtCircle() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 50;
+            const imageData = ctx.getImageData(centerX - radius, centerY - radius, 2 * radius, 2 * radius);
+            const pixels = imageData.data;
 
-            // Verifica se o clique foi dentro do círculo central
-            const distance = Math.sqrt(Math.pow(x - canvas.width / 2, 2) + Math.pow(y - canvas.height / 2, 2));
-            if (distance <= 50) {
-                alert("Você clicou dentro do círculo!");
+            let r = 0, g = 0, b = 0, count = 0;
+
+            // Loop pelos pixels no círculo
+            for (let y = 0; y < 2 * radius; y++) {
+                for (let x = 0; x < 2 * radius; x++) {
+                    const idx = ((y * 2 * radius) + x) * 4;
+                    const distance = Math.sqrt(Math.pow(x - radius, 2) + Math.pow(y - radius, 2));
+                    if (distance <= radius) {
+                        r += pixels[idx];
+                        g += pixels[idx + 1];
+                        b += pixels[idx + 2];
+                        count++;
+                    }
+                }
             }
-        });
 
-        // Iniciar a câmera
-        startCamera();
+            if (count > 0) {
+                r = Math.floor(r / count);
+                g = Math.floor(g / count);
+                b = Math.floor(b / count);
+            }
+
+            const color = `rgb(${r}, ${g}, ${b})`;
+            colorDisplay.textContent = `Cor: ${color}`;
+            colorDisplay.style.backgroundColor = color;
+        }
+
+        // Iniciar a câmera e desenhar a imagem
+        getCameras();
         draw();
+
+        // A cada 500ms, atualiza a cor central
+        setInterval(getColorAtCircle, 500);
     </script>
 </body>
 </html>
