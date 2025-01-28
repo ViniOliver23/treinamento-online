@@ -1,228 +1,238 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teste de Câmera</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      position: relative;
- background-color:gray
-    }
-    video {
-      width: 100%;
-      max-width: 400px;
-      margin-top: 20px;
-      border: 2px solid #000;
-    }
-    .info {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #555;
-    }
-    #photo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 50%;
-      max-height: 50%;
-      border-radius: 10px;
-      border: 2px solid #000;
-      display: none;
-    }
-    .color-info {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #555;
-    }
-    .overlay {
-      position: fixed; /* Ajuste para posicionar sobre a tela */
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: rgba(0, 0, 0, 0.7); /* Cor escura para o fundo */
-      z-index: 100; /* Z-index alto para sobrepor a tela */
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    .overlay-content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      max-width: 400px;
-      width: 80%;
-    }
-    .focus-box {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 70%;
-      height: 70%;
-      transform: translate(-50%, -50%);
-      border: 4px solid #fff; /* Cor da borda do foco */
-      box-sizing: border-box;
-      pointer-events: none;
-      z-index: 20;
-    }
-    .focus-lines {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      top: 0;
-      left: 0;
-      z-index: 15;
-    }
-    .horizontal-line, .vertical-line {
-      position: absolute;
-      background-color: #fff;
-    }
-    .horizontal-line {
-      height: 2px;
-      width: 100%;
-      top: 50%;
-      left: 0;
-    }
-    .vertical-line {
-      width: 2px;
-      height: 100%;
-      left: 50%;
-      top: 0;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #007BFF;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-  </style>
-</head>
-<body>
-  <h1>Teste de Câmera</h1>
-  <video id="video" autoplay playsinline></video>
-  <div class="info">
-    Se a câmera não abrir, verifique as permissões do navegador.
-  </div>
-  <div class="color-info" id="color-info"></div>
-  <img id="photo" alt="Foto tirada">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Teste de Câmera</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        position: relative;
+      }
+      video {
+        width: 100%;
+        max-width: 400px;
+        margin-top: 20px;
+        border: 2px solid #000;
+      }
+      .info {
+        margin-top: 20px;
+        font-size: 16px;
+        color: #555;
+      }
+      #photo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        max-width: 50%;
+        max-height: 50%;
+        border-radius: 10px;
+        border: 2px solid #000;
+        display: none;
+      }
+      .color-info {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #555;
+      }
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 100;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .overlay-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        text-align: center;
+        max-width: 400px;
+        width: 80%;
+      }
+      .focus-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 70%;
+        height: 70%;
+        transform: translate(-50%, -50%);
+        border: 4px solid #fff;
+        box-sizing: border-box;
+        pointer-events: none;
+        z-index: 20;
+      }
+      .focus-lines {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 15;
+      }
+      .horizontal-line,
+      .vertical-line {
+        position: absolute;
+        background-color: #fff;
+      }
+      .horizontal-line {
+        height: 2px;
+        width: 100%;
+        top: 50%;
+        left: 0;
+      }
+      .vertical-line {
+        width: 2px;
+        height: 100%;
+        left: 50%;
+        top: 0;
+      }
+      button {
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Teste de Câmera</h1>
+    <video id="video" autoplay playsinline></video>
+    <div class="info">Se a câmera não abrir, verifique as permissões do navegador.</div>
+    <div class="color-info" id="color-info"></div>
+    <img id="photo" alt="Foto tirada" />
 
-  <!-- Tela de sobreposição -->
-  <div id="overlay" class="overlay">
-    <div class="overlay-content">
-      <h2>Permitir acesso à câmera</h2>
-      <p>Para continuar, por favor, permita o acesso à sua câmera.</p>
-      <button id="allow-button">Permitir acesso</button>
+    <!-- Tela de sobreposição -->
+    <div id="overlay" class="overlay">
+      <div class="overlay-content">
+        <h2>Permitir acesso à câmera</h2>
+        <p>Para continuar, por favor, permita o acesso à sua câmera.</p>
+        <button id="allow-button">Permitir acesso</button>
+      </div>
     </div>
-  </div>
 
-  <div class="focus-box"></div>
-  <div class="focus-lines">
-    <div class="horizontal-line"></div>
-    <div class="vertical-line"></div>
-  </div>
+    <div class="focus-box"></div>
+    <div class="focus-lines">
+      <div class="horizontal-line"></div>
+      <div class="vertical-line"></div>
+    </div>
 
-  <script>
-    let currentStream = null;
-    let videoElement = document.getElementById('video');
-    let photoElement = document.getElementById('photo');
-    let colorInfoElement = document.getElementById('color-info');
-    let overlayElement = document.getElementById('overlay');
-    let allowButton = document.getElementById('allow-button');
+    <script>
+      let currentStream = null;
+      let videoElement = document.getElementById("video");
+      let photoElement = document.getElementById("photo");
+      let colorInfoElement = document.getElementById("color-info");
+      let overlayElement = document.getElementById("overlay");
+      let allowButton = document.getElementById("allow-button");
 
-    // Função para iniciar a câmera
-    async function startCamera(camera = 'environment') {
-      try {
-        // Solicita o acesso à câmera
-        if (currentStream) {
-          currentStream.getTracks().forEach(track => track.stop());
+      // Função para iniciar a câmera
+      async function startCamera(camera = "environment") {
+        try {
+          // Solicita o acesso à câmera
+          if (currentStream) {
+            currentStream.getTracks().forEach((track) => track.stop());
+          }
+
+          currentStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: camera }, // Usa a câmera especificada
+            audio: false,
+          });
+
+          // Exibe o vídeo no elemento <video>
+          videoElement.srcObject = currentStream;
+
+          // Aguardar até que o vídeo esteja pronto para ser capturado
+          videoElement.onloadedmetadata = () => {
+            // Inicia o intervalo para capturar a foto a cada 1 segundo
+            const captureInterval = setInterval(() => {
+              // Verifica se o vídeo foi carregado e está ativo
+              if (videoElement.videoWidth > 0 && videoElement.videoHeight > 0) {
+                capturePhoto();
+              }
+            }, 1000);
+
+            // Limpar o intervalo após 10 segundos (ou o tempo desejado)
+            setTimeout(() => {
+              clearInterval(captureInterval);
+            }, 10000); // Intervalo de 10 segundos para parar a captura
+          };
+        } catch (err) {
+          // Exibe o erro no console e alerta o usuário
+          console.error("Erro ao acessar a câmera:", err);
+          alert("Não foi possível acessar a câmera. Verifique as permissões do navegador.");
+        }
+      }
+
+      // Função para capturar a foto automaticamente
+      function capturePhoto() {
+        // Cria um canvas para capturar a imagem
+        let canvas = document.createElement("canvas");
+        let context = canvas.getContext("2d");
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+        // Exibe a foto no centro da tela
+        let dataUrl = canvas.toDataURL("image/png");
+        photoElement.src = dataUrl;
+        photoElement.style.display = "block";
+
+        // Obtém a cor dominante da foto
+        getDominantColor(canvas);
+      }
+
+      // Função para calcular a cor dominante da imagem
+      function getDominantColor(canvas) {
+        let context = canvas.getContext("2d");
+        let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        let data = imageData.data;
+
+        let r = 0,
+          g = 0,
+          b = 0;
+
+        // Itera sobre cada pixel da imagem para calcular a média das cores
+        for (let i = 0; i < data.length; i += 4) {
+          r += data[i]; // Red
+          g += data[i + 1]; // Green
+          b += data[i + 2]; // Blue
         }
 
-        currentStream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: camera }, // Usa a câmera especificada
-          audio: false
-        });
+        // Calcula a média das cores
+        let pixelCount = data.length / 4;
+        r = Math.floor(r / pixelCount);
+        g = Math.floor(g / pixelCount);
+        b = Math.floor(b / pixelCount);
 
-        // Exibe o vídeo no elemento <video>
-        videoElement.srcObject = currentStream;
-
-        // Aguardar até que o vídeo esteja pronto para ser capturado
-        videoElement.onloadedmetadata = () => {
-          // A câmera está pronta, captura a foto automaticamente
-          capturePhoto();
-        };
-      } catch (err) {
-        // Exibe o erro no console e alerta o usuário
-        console.error("Erro ao acessar a câmera:", err);
-        alert("Não foi possível acessar a câmera. Verifique as permissões do navegador.");
-      }
-    }
-
-    // Função para capturar a foto automaticamente
-    function capturePhoto() {
-      // Cria um canvas para capturar a imagem
-      let canvas = document.createElement('canvas');
-      let context = canvas.getContext('2d');
-      canvas.width = videoElement.videoWidth;
-      canvas.height = videoElement.videoHeight;
-      context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-      // Exibe a foto no centro da tela
-      let dataUrl = canvas.toDataURL('image/png');
-      photoElement.src = dataUrl;
-      photoElement.style.display = 'block';
-
-      // Obtém a cor dominante da foto
-      getDominantColor(canvas);
-    }
-
-    // Função para calcular a cor dominante da imagem
-    function getDominantColor(canvas) {
-      let context = canvas.getContext('2d');
-      let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-      let data = imageData.data;
-
-      let r = 0, g = 0, b = 0;
-
-      // Itera sobre cada pixel da imagem para calcular a média das cores
-      for (let i = 0; i < data.length; i += 4) {
-        r += data[i];     // Red
-        g += data[i + 1]; // Green
-        b += data[i + 2]; // Blue
+        // Exibe a cor dominante
+        let color = `rgb(${r}, ${g}, ${b})`;
+        colorInfoElement.textContent = `Cor dominante: ${color}`;
+        colorInfoElement.style.color = color;
       }
 
-      // Calcula a média das cores
-      let pixelCount = data.length / 4;
-      r = Math.floor(r / pixelCount);
-      g = Math.floor(g / pixelCount);
-      b = Math.floor(b / pixelCount);
+      // Função para permitir o acesso à câmera
+      allowButton.addEventListener("click", () => {
+        // Remove a tela de sobreposição
+        overlayElement.style.display = "none";
 
-      // Exibe a cor dominante
-      let color = `rgb(${r}, ${g}, ${b})`;
-      colorInfoElement.textContent = `Cor dominante: ${color}`;
-      colorInfoElement.style.color = color;
-    }
-
-    // Função para permitir o acesso à câmera
-    allowButton.addEventListener('click', () => {
-      // Remove a tela de sobreposição
-      overlayElement.style.display = 'none';
-
-      // Inicia a câmera
-      startCamera('environment');
-    });
-  </script>
-</body>
+        // Inicia a câmera
+        startCamera("environment");
+      });
+    </script>
+  </body>
 </html>
