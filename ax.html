@@ -10,6 +10,7 @@
         text-align: center;
         margin: 0;
         padding: 0;
+        position: relative;
       }
       video {
         width: 100%;
@@ -27,38 +28,20 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        max-width: 50%;
-        max-height: 50%;
+        max-width: 150px;
+        max-height: 150px;
         border-radius: 10px;
         border: 2px solid #000;
         display: none;
       }
-      .color-info {
-        margin-top: 20px;
+      .photo-caption {
         font-size: 18px;
+        font-weight: bold;
         color: #555;
+        margin-top: 10px;
+        display: none;
       }
-      .overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.7);
-        z-index: 100;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .overlay-content {
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: center;
-        max-width: 400px;
-        width: 80%;
-      }
-      button {
+      #capture-button {
         padding: 10px 20px;
         background-color: #007bff;
         color: white;
@@ -66,9 +49,36 @@
         border-radius: 5px;
         cursor: pointer;
         font-size: 16px;
+        margin-top: 20px;
       }
-      button:hover {
+      #capture-button:hover {
         background-color: #0056b3;
+      }
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        color: white;
+        font-size: 20px;
+      }
+      #overlay button {
+        padding: 10px 20px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
+      }
+      #overlay button:hover {
+        background-color: #218838;
       }
     </style>
   </head>
@@ -76,134 +86,78 @@
     <h1>Teste de Câmera</h1>
     <video id="video" autoplay playsinline></video>
     <div class="info">Se a câmera não abrir, verifique as permissões do navegador.</div>
-    <div class="color-info" id="color-info"></div>
     <img id="photo" alt="Foto tirada" />
-
-    <!-- Tela de sobreposição -->
-    <div id="overlay" class="overlay">
-      <div class="overlay-content">
-        <h2>Permitir acesso à câmera</h2>
-        <p>Para continuar, por favor, permita o acesso à sua câmera.</p>
-        <button id="allow-button">Permitir acesso</button>
-      </div>
-    </div>
+    <div id="photo-caption" class="photo-caption">Foto tirada</div>
 
     <button id="capture-button">Tirar Foto</button>
 
+    <!-- Overlay de Permissão -->
+    <div id="overlay">
+      <div>
+        <p>Por favor, permita o acesso à câmera.</p>
+        <button id="permit-access">Permitir Câmera</button>
+      </div>
+    </div>
+
     <script>
       let currentStream = null;
-      let videoElement = document.getElementById("video");
-      let photoElement = document.getElementById("photo");
-      let colorInfoElement = document.getElementById("color-info");
-      let overlayElement = document.getElementById("overlay");
-      let allowButton = document.getElementById("allow-button");
-      let captureButton = document.getElementById("capture-button");
+      const videoElement = document.getElementById("video");
+      const photoElement = document.getElementById("photo");
+      const photoCaptionElement = document.getElementById("photo-caption");
+      const captureButton = document.getElementById("capture-button");
+      const overlay = document.getElementById("overlay");
+      const permitButton = document.getElementById("permit-access");
 
-      // Função para iniciar a câmera
-      async function startCamera(camera = "environment") {
+      // Função para acessar a câmera
+      async function startCamera() {
         try {
-          // Solicita o acesso à câmera
-          if (currentStream) {
-            currentStream.getTracks().forEach((track) => track.stop());
-          }
-
-          currentStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: camera }, // Usa a câmera especificada
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "environment" }, // Usando a câmera traseira
             audio: false,
           });
-
-          // Exibe o vídeo no elemento <video>
-          videoElement.srcObject = currentStream;
-          overlayElement.style.display = "none"; // Esconde o overlay quando a câmera começa a funcionar
-        } catch (err) {
-          // Exibe o erro no console e alerta o usuário
-          console.error("Erro ao acessar a câmera:", err);
-          alert("Não foi possível acessar a câmera. Verifique as permissões do navegador.");
+          currentStream = stream;
+          videoElement.srcObject = stream;
+          overlay.style.display = "none"; // Esconde a sobreposição quando a câmera for acessada
+        } catch (error) {
+          console.error("Erro ao acessar a câmera:", error);
+          alert("Não foi possível acessar a câmera. Verifique as permissões.");
         }
       }
 
-      // Função para capturar a foto manualmente
-      captureButton.addEventListener("click", capturePhoto);
-
+      // Função para capturar uma foto do vídeo
       function capturePhoto() {
-        // Cria um canvas para capturar a imagem
-        let canvas = document.createElement("canvas");
-        let context = canvas.getContext("2d");
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
+
+        // Ajustando as dimensões do canvas
         canvas.width = videoElement.videoWidth;
         canvas.height = videoElement.videoHeight;
+
+        // Desenhando o vídeo no canvas
         context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
 
-        // Exibe a foto no centro da tela
-        let dataUrl = canvas.toDataURL("image/png");
+        // Convertendo o canvas para uma imagem
+        const dataUrl = canvas.toDataURL("image/png");
         photoElement.src = dataUrl;
-        photoElement.style.display = "block";
+        photoElement.style.display = "block"; // Exibindo a imagem
 
-        // Obtém a cor dominante da foto
-        getDominantColor(canvas);
+        // Exibindo a mensagem de "Foto tirada"
+        photoCaptionElement.style.display = "block";
       }
 
-      // Função para calcular a cor dominante da imagem
-      function getDominantColor(canvas) {
-        let context = canvas.getContext("2d");
-        let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-        let data = imageData.data;
-
-        let r = 0,
-          g = 0,
-          b = 0;
-
-        // Itera sobre cada pixel da imagem para calcular a média das cores
-        for (let i = 0; i < data.length; i += 4) {
-          r += data[i]; // Red
-          g += data[i + 1]; // Green
-          b += data[i + 2]; // Blue
-        }
-
-        // Calcula a média das cores
-        let pixelCount = data.length / 4;
-        r = Math.floor(r / pixelCount);
-        g = Math.floor(g / pixelCount);
-        b = Math.floor(b / pixelCount);
-
-        // Exibe a cor dominante
-        let color = `rgb(${r}, ${g}, ${b})`;
-        colorInfoElement.textContent = `Cor dominante: ${color}`;
-        colorInfoElement.style.color = color;
-
-        // Chama a função para identificar o cabo RJ45
-        identifyRJ45Color(color);
-      }
-
-      // Função para identificar o padrão de cores do cabo RJ45
-      function identifyRJ45Color(color) {
-        const colorNames = {
-          "rgb(255, 255, 255)": "Branco",
-          "rgb(0, 255, 0)": "Verde",
-          "rgb(0, 128, 0)": "Verde Escuro",
-          "rgb(0, 0, 255)": "Azul",
-          "rgb(255, 165, 0)": "Laranja",
-          "rgb(128, 0, 0)": "Marrom",
-        };
-
-        let identifiedColor = colorNames[color] || "Desconhecida";
-
-        colorInfoElement.textContent = `Cor identificada: ${identifiedColor}`;
-        colorInfoElement.style.color = color;
-      }
-
-      // Função para permitir o acesso à câmera
-      allowButton.addEventListener("click", () => {
-        // Remove a tela de sobreposição
-        overlayElement.style.display = "none";
-
-        // Inicia a câmera
-        startCamera("environment");
+      // Função para pedir permissão e iniciar a câmera
+      permitButton.addEventListener("click", () => {
+        startCamera(); // Chama a função que acessa a câmera
       });
 
-      // Inicia a câmera automaticamente quando a página carregar
+      // Capturando a foto ao clicar no botão
+      captureButton.addEventListener("click", capturePhoto);
+
+      // Se a página for recarregada, tenta acessar a câmera
       window.onload = () => {
-        // Exibe a tela de permissão caso a câmera ainda não tenha permissão
-        overlayElement.style.display = "flex";
+        if (currentStream === null) {
+          overlay.style.display = "flex"; // Exibe a sobreposição se a câmera ainda não estiver ativada
+        }
       };
     </script>
   </body>
