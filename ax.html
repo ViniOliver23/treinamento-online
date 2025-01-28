@@ -62,8 +62,8 @@
     }
     .focus-lines {
       position: absolute;
-      width: 90%;
-      height: 90%;
+      width: 100%;
+      height: 100%;
       top: 0;
       left: 0;
       z-index: 15;
@@ -84,10 +84,6 @@
       left: 50%;
       top: 0;
     }
-Button{
-background-color: blue;
-positivo:fixed;
-}
   </style>
 </head>
 <body>
@@ -96,7 +92,6 @@ positivo:fixed;
   <div class="info">
     Se a câmera não abrir, verifique as permissões do navegador.
   </div>
-  
   <div class="color-info" id="color-info"></div>
   <img id="photo" alt="Foto tirada">
 
@@ -106,7 +101,7 @@ positivo:fixed;
     <div class="horizontal-line"></div>
     <div class="vertical-line"></div>
   </div>
-<button onclick="takePhoto()">Tirar Foto</button>
+
   <script>
     let currentStream = null;
     let videoElement = document.getElementById('video');
@@ -128,6 +123,9 @@ positivo:fixed;
 
         // Exibe o vídeo no elemento <video>
         videoElement.srcObject = currentStream;
+
+        // Captura a foto automaticamente assim que a câmera iniciar
+        capturePhoto();
       } catch (err) {
         // Exibe o erro no console e alerta o usuário
         console.error("Erro ao acessar a câmera:", err);
@@ -135,8 +133,8 @@ positivo:fixed;
       }
     }
 
-    // Função para tirar uma foto
-    function takePhoto() {
+    // Função para capturar a foto automaticamente
+    function capturePhoto() {
       // Cria um canvas para capturar a imagem
       let canvas = document.createElement('canvas');
       let context = canvas.getContext('2d');
