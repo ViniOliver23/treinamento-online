@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câmera com Filtro e Imagem Original</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        /* Estilo para o topo da página com a imagem original */
+        .top-image {
+            width: 100%;
+            height: 200px;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMDUfO3KnH5fj69jfeNgs7Pnl1Ud6TXyZ0qRFLbNzwOxDRgwP62Zp5kYcl&s=10');
+            background-position: left;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        video {
+            width: 100%;
+            max-width: 600px;
+        }
+        .camera-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        /* Filtros aplicados à imagem da câmera */
+        .protanopia {
+            filter: contrast(150%) saturate(100%) brightness(90%) hue-rotate(-90deg);
+        }
+        .deuteranopia {
+            filter: contrast(150%) saturate(100%) brightness(90%) hue-rotate(-45deg);
+        }
+        .tritanopia {
+            filter: contrast(150%) saturate(100%) brightness(90%) hue-rotate(90deg);
+        }
+        .high-contrast {
+            filter: contrast(200%) brightness(150%);
+        }
+    </style>
+</head>
+<body>
+    <!-- Exibe a imagem original no topo -->
+    <div class="top-image"></div>
+
+    <!-- Seção para selecionar a câmera e exibir o vídeo -->
+    <div class="camera-container">
+        <select id="cameraSelect"></select>
+        <video id="videoElement" autoplay></video>
+        <div>
+            <label for="filterSelect">Escolha o filtro para daltonismo:</label>
+            <select id="filterSelect">
+                <option value="">Nenhum Filtro</option>
+                <option value="protanopia">Protanopia</option>
+                <option value="deuteranopia">Deuteranopia</option>
+                <option value="tritanopia">Tritanopia</option>
+                <option value="high-contrast">Alto Contraste</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        const videoElement = document.getElementById('videoElement');
+        const cameraSelect = document.getElementById('cameraSelect');
+        const filterSelect = document.getElementById('filterSelect');
+
+        async function getCameras() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                if (videoDevices.length === 0) {
+                    console.error('Nenhuma câmera encontrada!');
+                    return;
+                }
+
+                cameraSelect.innerHTML = '';
+                videoDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.textContent = device.label || `Câmera ${index + 1}`;
+                    cameraSelect.appendChild(option);
+                });
+
+                // Tenta iniciar a segunda câmera, se disponível
+                const selectedDeviceId = videoDevices.length > 1 ? videoDevices[1].deviceId : videoDevices[0].deviceId;
+                startCamera(selectedDeviceId);
+            } catch (error) {
+                console.error('Erro ao acessar as câmeras:', error);
+            }
+        }
+
+        async function startCamera(deviceId) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: deviceId } }
+                });
+                videoElement.srcObject = stream;
+            } catch (error) {
+                console.error('Erro ao iniciar a câmera:', error);
+            }
+        }
+
+        cameraSelect.addEventListener('change', (event) => {
+            const selectedDeviceId = event.target.value;
+            startCamera(selectedDeviceId);
+        });
+
+        // Adiciona o filtro selecionado à imagem da câmera
+        filterSelect.addEventListener('change', (event) => {
+            const selectedFilter = event.target.value;
+            videoElement.className = ''; // Limpa todas as classes de filtro
+            if (selectedFilter) {
+                videoElement.classList.add(selectedFilter); // Aplica o filtro escolhido
+            }
+        });
+
+        getCameras();
+    </script>
+</body>
+</html>
