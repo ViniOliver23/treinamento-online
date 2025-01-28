@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câmera com Ajuste de Cores</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        /* Estilo para o topo da página com a imagem original */
+        .top-image {
+            width: 100%;
+            height: 200px;
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTMDUfO3KnH5fj69jfeNgs7Pnl1Ud6TXyZ0qRFLbNzwOxDRgwP62Zp5kYcl&s=10');
+            background-position: left;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        video {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .camera-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .slider-container {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .slider-container label {
+            margin-bottom: 5px;
+        }
+
+        .slider {
+            width: 200px;
+        }
+
+        /* Estilo para os filtros aplicados à imagem */
+        video {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Exibe a imagem original no topo -->
+    <div class="top-image"></div>
+
+    <!-- Seção para selecionar a câmera e exibir o vídeo -->
+    <div class="camera-container">
+        <select id="cameraSelect"></select>
+        <video id="videoElement" autoplay></video>
+
+        <!-- Controles deslizantes para ajustar as cores -->
+        <div class="slider-container">
+            <label for="hueSlider">Ajuste de Hue (Cor)</label>
+            <input type="range" id="hueSlider" class="slider" min="-180" max="180" value="0">
+            <span id="hueValue">0</span>
+        </div>
+
+        <div class="slider-container">
+            <label for="saturationSlider">Ajuste de Saturação</label>
+            <input type="range" id="saturationSlider" class="slider" min="0" max="200" value="100">
+            <span id="saturationValue">100</span>
+        </div>
+
+        <div class="slider-container">
+            <label for="brightnessSlider">Ajuste de Brilho</label>
+            <input type="range" id="brightnessSlider" class="slider" min="0" max="200" value="100">
+            <span id="brightnessValue">100</span>
+        </div>
+
+        <div class="slider-container">
+            <label for="contrastSlider">Ajuste de Contraste</label>
+            <input type="range" id="contrastSlider" class="slider" min="0" max="200" value="100">
+            <span id="contrastValue">100</span>
+        </div>
+    </div>
+
+    <script>
+        const videoElement = document.getElementById('videoElement');
+        const cameraSelect = document.getElementById('cameraSelect');
+        const hueSlider = document.getElementById('hueSlider');
+        const saturationSlider = document.getElementById('saturationSlider');
+        const brightnessSlider = document.getElementById('brightnessSlider');
+        const contrastSlider = document.getElementById('contrastSlider');
+
+        const hueValue = document.getElementById('hueValue');
+        const saturationValue = document.getElementById('saturationValue');
+        const brightnessValue = document.getElementById('brightnessValue');
+        const contrastValue = document.getElementById('contrastValue');
+
+        // Função para aplicar o filtro de cor no vídeo
+        function applyFilter() {
+            const hue = hueSlider.value;
+            const saturation = saturationSlider.value;
+            const brightness = brightnessSlider.value;
+            const contrast = contrastSlider.value;
+
+            videoElement.style.filter = `
+                hue-rotate(${hue}deg)
+                saturate(${saturation}%)
+                brightness(${brightness}%)
+                contrast(${contrast}%)
+            `;
+        }
+
+        // Função para obter e iniciar as câmeras disponíveis
+        async function getCameras() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                if (videoDevices.length === 0) {
+                    console.error('Nenhuma câmera encontrada!');
+                    return;
+                }
+
+                cameraSelect.innerHTML = '';
+                videoDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.textContent = device.label || `Câmera ${index + 1}`;
+                    cameraSelect.appendChild(option);
+                });
+
+                // Tenta iniciar a segunda câmera, se disponível
+                const selectedDeviceId = videoDevices.length > 1 ? videoDevices[1].deviceId : videoDevices[0].deviceId;
+                startCamera(selectedDeviceId);
+            } catch (error) {
+                console.error('Erro ao acessar as câmeras:', error);
+            }
+        }
+
+        // Função para iniciar a câmera
+        async function startCamera(deviceId) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { deviceId: { exact: deviceId } }
+                });
+                videoElement.srcObject = stream;
+            } catch (error) {
+                console.error('Erro ao iniciar a câmera:', error);
+            }
+        }
+
+        // Atualiza os valores dos sliders
+        hueSlider.addEventListener('input', (event) => {
+            hueValue.textContent = event.target.value;
+            applyFilter();
+        });
+
+        saturationSlider.addEventListener('input', (event) => {
+            saturationValue.textContent = event.target.value;
+            applyFilter();
+        });
+
+        brightnessSlider.addEventListener('input', (event) => {
+            brightnessValue.textContent = event.target.value;
+            applyFilter();
+        });
+
+        contrastSlider.addEventListener('input', (event) => {
+            contrastValue.textContent = event.target.value;
+            applyFilter();
+        });
+
+        // Inicia a captura das câmeras
+        getCameras();
+    </script>
+</body>
+</html>
