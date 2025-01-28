@@ -10,7 +10,6 @@
         text-align: center;
         margin: 0;
         padding: 0;
-        position: relative;
       }
       video {
         width: 100%;
@@ -59,43 +58,6 @@
         max-width: 400px;
         width: 80%;
       }
-      .focus-box {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 70%;
-        height: 70%;
-        transform: translate(-50%, -50%);
-        border: 4px solid #fff;
-        box-sizing: border-box;
-        pointer-events: none;
-        z-index: 20;
-      }
-      .focus-lines {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        z-index: 15;
-      }
-      .horizontal-line,
-      .vertical-line {
-        position: absolute;
-        background-color: #fff;
-      }
-      .horizontal-line {
-        height: 2px;
-        width: 100%;
-        top: 50%;
-        left: 0;
-      }
-      .vertical-line {
-        width: 2px;
-        height: 100%;
-        left: 50%;
-        top: 0;
-      }
       button {
         padding: 10px 20px;
         background-color: #007bff;
@@ -126,11 +88,7 @@
       </div>
     </div>
 
-    <div class="focus-box"></div>
-    <div class="focus-lines">
-      <div class="horizontal-line"></div>
-      <div class="vertical-line"></div>
-    </div>
+    <button id="capture-button">Tirar Foto</button>
 
     <script>
       let currentStream = null;
@@ -139,6 +97,7 @@
       let colorInfoElement = document.getElementById("color-info");
       let overlayElement = document.getElementById("overlay");
       let allowButton = document.getElementById("allow-button");
+      let captureButton = document.getElementById("capture-button");
 
       // Função para iniciar a câmera
       async function startCamera(camera = "environment") {
@@ -155,22 +114,7 @@
 
           // Exibe o vídeo no elemento <video>
           videoElement.srcObject = currentStream;
-
-          // Aguardar até que o vídeo esteja pronto para ser capturado
-          videoElement.onloadedmetadata = () => {
-            // Inicia o intervalo para capturar a foto a cada 1 segundo
-            const captureInterval = setInterval(() => {
-              // Verifica se o vídeo foi carregado e está ativo
-              if (videoElement.videoWidth > 0 && videoElement.videoHeight > 0) {
-                capturePhoto();
-              }
-            }, 1000);
-
-            // Limpar o intervalo após 10 segundos (ou o tempo desejado)
-            setTimeout(() => {
-              clearInterval(captureInterval);
-            }, 10000); // Intervalo de 10 segundos para parar a captura
-          };
+          overlayElement.style.display = "none"; // Esconde o overlay quando a câmera começa a funcionar
         } catch (err) {
           // Exibe o erro no console e alerta o usuário
           console.error("Erro ao acessar a câmera:", err);
@@ -178,7 +122,9 @@
         }
       }
 
-      // Função para capturar a foto automaticamente
+      // Função para capturar a foto manualmente
+      captureButton.addEventListener("click", capturePhoto);
+
       function capturePhoto() {
         // Cria um canvas para capturar a imagem
         let canvas = document.createElement("canvas");
@@ -222,6 +168,26 @@
         // Exibe a cor dominante
         let color = `rgb(${r}, ${g}, ${b})`;
         colorInfoElement.textContent = `Cor dominante: ${color}`;
+        colorInfoElement.style.color = color;
+
+        // Chama a função para identificar o cabo RJ45
+        identifyRJ45Color(color);
+      }
+
+      // Função para identificar o padrão de cores do cabo RJ45
+      function identifyRJ45Color(color) {
+        const colorNames = {
+          "rgb(255, 255, 255)": "Branco",
+          "rgb(0, 255, 0)": "Verde",
+          "rgb(0, 128, 0)": "Verde Escuro",
+          "rgb(0, 0, 255)": "Azul",
+          "rgb(255, 165, 0)": "Laranja",
+          "rgb(128, 0, 0)": "Marrom",
+        };
+
+        let identifiedColor = colorNames[color] || "Desconhecida";
+
+        colorInfoElement.textContent = `Cor identificada: ${identifiedColor}`;
         colorInfoElement.style.color = color;
       }
 
