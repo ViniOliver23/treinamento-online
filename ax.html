@@ -3,89 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Identificador de Cores</title>
+  <title>Teste de Câmera</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       margin: 0;
       padding: 0;
+      position: relative;
     }
-    video, canvas {
-      max-width: 100%;
-      margin: 10px auto;
+    video {
+      width: 100%;
+      max-width: 400px;
+      margin-top: 20px;
+      border: 2px solid #000;
+    }
+    .info {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #555;
+    }
+    #photo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 50%;
+      max-height: 50%;
+      border-radius: 10px;
+      border: 2px solid #000;
+      display: none;
     }
     .color-info {
-      margin-top: 10px;
+      margin-top: 20px;
       font-size: 18px;
-      font-weight: bold;
-    }
-    button {
-      padding: 10px 20px;
-      margin: 10px;
-      background-color: #007BFF;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
+      color: #555;
     }
   </style>
 </head>
 <body>
-  <h1>Identificador de Cores</h1>
-  <video id="video" autoplay></video>
-  <canvas id="canvas"></canvas>
-  <div class="color-info">
-    <p>Cor detectada: <span id="colorName">Nenhuma</span></p>
-    <p>RGB: <span id="rgbValue">---</span></p>
+  <h1>Teste de Câmera</h1>
+  <video id="video" autoplay playsinline></video>
+  <div class="info">
+    Se a câmera não abrir, verifique as permissões do navegador.
   </div>
-  <button onclick="captureColor()">Identificar Cor</button>
+  <button onclick="takePhoto()">Tirar Foto</button>
+  <div class="color-info" id="color-info"></div>
+  <img id="photo" alt="Foto tirada">
 
   <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const colorName = document.getElementById('colorName');
-    const rgbValue = document.getElementById('rgbValue');
-    const ctx = canvas.getContext('2d');
+    let currentStream = null;
+    let videoElement = document.getElementById('video');
+    let photoElement = document.getElementById('photo');
+    let colorInfoElement = document.getElementById('color-info');
+    
+    // Função para iniciar a câmera
+    async function startCamera(camera = 'environment') {
+      try {
+        // Solicita o acesso à câmera
+        if (currentStream) {
+          currentStream.getTracks().forEach(track => track.stop());
+        }
 
-    // Acessar a câmera do dispositivo
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        video.srcObject = stream;
-      })
-      .catch((err) => {
-        console.error('Erro ao acessar a câmera:', err);
-      });
+        currentStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: camera }, // Usa a câmera especificada
+          audio: false
+        });
 
-    // Função para capturar a cor
-    function captureColor() {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      const imageData = ctx.getImageData(canvas.width / 2, canvas.height / 2, 1, 1);
-      const pixel = imageData.data;
-
-      const r = pixel[0];
-      const g = pixel[1];
-      const b = pixel[2];
-
-      rgbValue.textContent = `R: ${r}, G: ${g}, B: ${b}`;
-      colorName.textContent = getColorName(r, g, b);
+        // Exibe o vídeo no elemento <video>
+        videoElement.srcObject = currentStream;
+      } catch (err) {
+        // Exibe o erro no console e alerta o usuário
+        console.error("Erro ao acessar a câmera:", err);
+        alert("Não foi possível acessar a câmera. Verifique as permissões do navegador.");
+      }
     }
 
-    // Função para estimar o nome da cor (básico)
-    function getColorName(r, g, b) {
-      if (r > 200 && g > 200 && b > 200) return 'Branco';
-      if (r > 200 && g < 100 && b < 100) return 'Vermelho';
-      if (r < 100 && g > 200 && b < 100) return 'Verde';
-      if (r < 100 && g < 100 && b > 200) return 'Azul';
-      if (r > 200 && g > 200 && b < 100) return 'Amarelo';
-      if (r > 200 && g < 100 && b > 200) return 'Rosa';
-      return 'Cor desconhecida';
+    // Função para tirar uma foto
+    function takePhoto() {
+      // Cria um canvas para capturar a imagem
+      let canvas = document.createElement('canvas');
+      let context = canvas.getContext('2d');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+      // Exibe a foto no centro da tela
+      let dataUrl = canvas.toDataURL('image/png');
+      photoElement.src = dataUrl;
+      photoElement.style.display = 'block';
+
+      // Obtém a cor dominante da foto
+      getDominantColor(canvas);
+    }
+
+    // Função para calcular a cor dominante da imagem
+    function getDominantColor(canvas) {
+      let context = canvas.getContext('2d');
+      let imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+      let data = imageData.data;
+
+      let r = 0, g = 0, b = 0;
+
+      // Itera sobre cada pixel da imagem para calcular a média das cores
+      for (let i = 0; i < data.length; i += 4) {
+        r += data[i];     // Red
+        g += data[i + 1]; // Green
+        b += data[i + 2]; // Blue
+      }
+
+      // Calcula a média das cores
+      let pixelCount = data.length / 4;
+      r = Math.floor(r / pixelCount);
+      g = Math.floor(g / pixelCount);
+      b = Math.floor(b / pixelCount);
+
+      // Exibe a cor dominante
+      let color = `rgb(${r}, ${g}, ${b})`;
+      colorInfoElement.textContent = `Cor dominante: ${color}`;
+      colorInfoElement.style.color = color;
+    }
+
+    // Inicia a câmera ao carregar a página, com a opção de escolher a câmera traseira
+    window.onload = () => startCamera('environment');
+
+    // Função para alternar entre a câmera frontal e traseira
+    function toggleCamera() {
+      if (currentStream) {
+        let videoTrack = currentStream.getVideoTracks()[0];
+        let facingMode = videoTrack.getSettings().facingMode === 'environment' ? 'user' : 'environment';
+        startCamera(facingMode);
+      }
     }
   </script>
 </body>
