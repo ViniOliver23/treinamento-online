@@ -157,9 +157,10 @@
         // Exibe o vídeo no elemento <video>
         videoElement.srcObject = currentStream;
 
-        // Inicia a captura de foto assim que a câmera estiver pronta
+        // Aguardar até que o vídeo esteja pronto para ser capturado
         videoElement.onloadedmetadata = () => {
-          capturePhoto(); // Captura a foto automaticamente
+          // A câmera está pronta, captura a foto automaticamente
+          capturePhoto();
         };
       } catch (err) {
         // Exibe o erro no console e alerta o usuário
