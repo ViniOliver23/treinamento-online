@@ -16,13 +16,15 @@
             margin: 20px;
         }
         /* Filtro para realçar cores para daltonismo */
-        .color-enhance {
+        .color-enhance, #img2{
             filter: contrast(150%) saturate(200%) brightness(90%) hue-rotate(180deg);
         }
     </style>
 </head>
 <body>
-    <div><img src="https://4.bp.blogspot.com/_i6IlXwrawHA/SsCzJmRPlMI/AAAAAAAAAA4/vIY4RUBdtTg/s1600/cabos_2a.gif"></div>
+    <div><img src="https://4.bp.blogspot.com/_i6IlXwrawHA/SsCzJmRPlMI/AAAAAAAAAA4/vIY4RUBdtTg/s1600/cabos_2a.gif">
+<img id="img2"; src="https://4.bp.blogspot.com/_i6IlXwrawHA/SsCzJmRPlMI/AAAAAAAAAA4/vIY4RUBdtTg/s1600/cabos_2a.gif">
+</div>
     <div class="camera-container">
         <select id="cameraSelect"></select>
         <video id="videoElement" autoplay></video>
