@@ -199,6 +199,12 @@
         // Inicia a câmera
         startCamera("environment");
       });
+
+      // Inicia a câmera automaticamente quando a página carregar
+      window.onload = () => {
+        // Exibe a tela de permissão caso a câmera ainda não tenha permissão
+        overlayElement.style.display = "flex";
+      };
     </script>
   </body>
 </html>
