@@ -39,6 +39,51 @@
       font-size: 18px;
       color: #555;
     }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7); /* Cor escura para o fundo */
+      z-index: 10;
+    }
+    .focus-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 70%;
+      height: 70%;
+      transform: translate(-50%, -50%);
+      border: 4px solid #fff; /* Cor da borda do foco */
+      box-sizing: border-box;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .focus-lines {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: 15;
+    }
+    .horizontal-line, .vertical-line {
+      position: absolute;
+      background-color: #fff;
+    }
+    .horizontal-line {
+      height: 2px;
+      width: 100%;
+      top: 50%;
+      left: 0;
+    }
+    .vertical-line {
+      width: 2px;
+      height: 100%;
+      left: 50%;
+      top: 0;
+    }
   </style>
 </head>
 <body>
@@ -50,6 +95,13 @@
   <button onclick="takePhoto()">Tirar Foto</button>
   <div class="color-info" id="color-info"></div>
   <img id="photo" alt="Foto tirada">
+
+  <div class="overlay"></div>
+  <div class="focus-box"></div>
+  <div class="focus-lines">
+    <div class="horizontal-line"></div>
+    <div class="vertical-line"></div>
+  </div>
 
   <script>
     let currentStream = null;
