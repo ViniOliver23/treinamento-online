@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Identificador de Cores</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    video, canvas {
+      max-width: 100%;
+      margin: 10px auto;
+    }
+    .color-info {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Identificador de Cores</h1>
+  <video id="video" autoplay></video>
+  <canvas id="canvas"></canvas>
+  <div class="color-info">
+    <p>Cor detectada: <span id="colorName">Nenhuma</span></p>
+    <p>RGB: <span id="rgbValue">---</span></p>
+  </div>
+  <button onclick="captureColor()">Identificar Cor</button>
+
+  <script>
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const colorName = document.getElementById('colorName');
+    const rgbValue = document.getElementById('rgbValue');
+    const ctx = canvas.getContext('2d');
+
+    // Acessar a câmera do dispositivo
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((stream) => {
+        video.srcObject = stream;
+      })
+      .catch((err) => {
+        console.error('Erro ao acessar a câmera:', err);
+      });
+
+    // Função para capturar a cor
+    function captureColor() {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      const imageData = ctx.getImageData(canvas.width / 2, canvas.height / 2, 1, 1);
+      const pixel = imageData.data;
+
+      const r = pixel[0];
+      const g = pixel[1];
+      const b = pixel[2];
+
+      rgbValue.textContent = `R: ${r}, G: ${g}, B: ${b}`;
+      colorName.textContent = getColorName(r, g, b);
+    }
+
+    // Função para estimar o nome da cor (básico)
+    function getColorName(r, g, b) {
+      if (r > 200 && g > 200 && b > 200) return 'Branco';
+      if (r > 200 && g < 100 && b < 100) return 'Vermelho';
+      if (r < 100 && g > 200 && b < 100) return 'Verde';
+      if (r < 100 && g < 100 && b > 200) return 'Azul';
+      if (r > 200 && g > 200 && b < 100) return 'Amarelo';
+      if (r > 200 && g < 100 && b > 200) return 'Rosa';
+      return 'Cor desconhecida';
+    }
+  </script>
+</body>
+</html>
