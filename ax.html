@@ -40,13 +40,13 @@
       color: #555;
     }
     .overlay {
-      position: fixed;
+      position: fixed; /* Ajuste para posicionar sobre a tela */
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
       background: rgba(0, 0, 0, 0.7); /* Cor escura para o fundo */
-      z-index: 100;
+      z-index: 100; /* Z-index alto para sobrepor a tela */
       display: flex;
       justify-content: center;
       align-items: center;
@@ -157,8 +157,10 @@
         // Exibe o vídeo no elemento <video>
         videoElement.srcObject = currentStream;
 
-        // Captura a foto automaticamente assim que a câmera iniciar
-        capturePhoto();
+        // Inicia a captura de foto assim que a câmera estiver pronta
+        videoElement.onloadedmetadata = () => {
+          capturePhoto(); // Captura a foto automaticamente
+        };
       } catch (err) {
         // Exibe o erro no console e alerta o usuário
         console.error("Erro ao acessar a câmera:", err);
