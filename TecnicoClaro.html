@@ -65,106 +65,126 @@
 
     <script>
         function carregarPreferencias() {
-            const modoSalvo = localStorage.getItem('modoOperacional') || 'Com Padrinho';
-            document.getElementById('modoOperacional').value = modoSalvo;
+    const modoSalvo = localStorage.getItem('modoOperacional') || 'Com Padrinho';
+    document.getElementById('modoOperacional').value = modoSalvo;
 
-            verificarData();
-            atualizarVisualizacao();
-        }
+    verificarData();
+    atualizarVisualizacao();
+}
 
-        function verificarData() {
-            const hoje = new Date().toLocaleDateString();
-            const ultimaData = localStorage.getItem('ultimaData');
+function verificarData() {
+    const hoje = new Date().toLocaleDateString();
+    const ultimaData = localStorage.getItem('ultimaData');
 
-            if (ultimaData !== hoje) {
-                localStorage.setItem('ultimaData', hoje);
-                localStorage.setItem('contadorRota', '01');
-                localStorage.setItem('atendimentoId', '0');
-                localStorage.setItem('produtivas', '0');
-                localStorage.setItem('naoprodutivas', '0');
-            }
+    if (ultimaData !== hoje) {
+        localStorage.setItem('ultimaData', hoje);
+        localStorage.setItem('contadorRota', '01');
+        localStorage.setItem('atendimentoId', '0');
+        localStorage.setItem('produtivas', '0');
+        localStorage.setItem('naoprodutivas', '0');
+    }
 
-            document.getElementById('contadorRota').textContent = localStorage.getItem('contadorRota') || '01';
-            document.getElementById('atendimentoId').value = localStorage.getItem('atendimentoId') || '0';
-        }
+    document.getElementById('contadorRota').textContent = localStorage.getItem('contadorRota') || '01';
+    document.getElementById('atendimentoId').value = localStorage.getItem('atendimentoId') || '0';
+}
 
-        function salvarModoOperacional() {
-            localStorage.setItem('modoOperacional', document.getElementById('modoOperacional').value);
-        }
+function salvarModoOperacional() {
+    localStorage.setItem('modoOperacional', document.getElementById('modoOperacional').value);
+}
 
-        function salvarHora(tipo, botao) {
-            const agora = new Date().toLocaleTimeString();
-            let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
-            dados[tipo] = agora;
-            localStorage.setItem('serviceactual', JSON.stringify(dados));
+function salvarHora(tipo, botao) {
+    const agora = new Date().toLocaleTimeString();
+    let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
+    dados[tipo] = agora;
+    localStorage.setItem('serviceactual', JSON.stringify(dados));
 
-            botao.classList.add('horario-selecionado');
-            atualizarVisualizacao();
-        }
+    botao.classList.add('horario-selecionado');
+    atualizarVisualizacao();
+}
 
-        function validarProdutividade() {
-            let status = document.getElementById("statusProdutivo").value;
-            let btnConcluir = document.getElementById("btnConcluir");
+function validarProdutividade() {
+    let status = document.getElementById("statusProdutivo").value;
+    let btnConcluir = document.getElementById("btnConcluir");
 
-            if (status) {
-                btnConcluir.style.opacity = "1";
-                btnConcluir.style.pointerEvents = "auto";
-            } else {
-                btnConcluir.style.opacity = "0.5";
-                btnConcluir.style.pointerEvents = "none";
-            }
-        }
+    if (status) {
+        btnConcluir.style.opacity = "1";
+        btnConcluir.style.pointerEvents = "auto";
+    } else {
+        btnConcluir.style.opacity = "0.5";
+        btnConcluir.style.pointerEvents = "none";
+    }
+}
 
-        function atualizarVisualizacao() {
-            let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
-            let materiais = document.getElementById('materiaisInstalados').value.trim();
-            let observacao = document.getElementById('observacao').value.trim();
-            let statusProdutivo = document.getElementById('statusProdutivo').value || "Não informado";
+function atualizarVisualizacao() {
+    let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
+    let materiais = document.getElementById('materiaisInstalados').value.trim();
+    let observacao = document.getElementById('observacao').value.trim();
+    let statusProdutivo = document.getElementById('statusProdutivo').value || "Não informado";
 
-            let texto = `*Rota ${document.getElementById('contadorRota').textContent}* - ${statusProdutivo}
+    let texto = `*Rota ${document.getElementById('contadorRota').textContent}* - ${statusProdutivo}
 ${document.getElementById('modoOperacional').value}
 _______________________________
 Tipo de Serviço: *${document.getElementById('tipoServico').value}*
-            
+        
 Início da Rota:  *${dados.emRota || '-'}*
 Início da OS:     *${dados.inicioOS || '-'}*
 Fim do OS:       *${dados.fimAtendimento || '-'}*
 `;
 
-            if (materiais) {
-                texto += `\n*Materiais Instalados:*\n   •${materiais.split('\n').join('\n   •')}`;
-            }
+    if (materiais) {
+        texto += `\n*Materiais Instalados:*\n   •${materiais.split('\n').join('\n   •')}`;
+    }
 
-            if (observacao) {
-                texto += `\n\n*Observação:*\n${observacao}`;
-            }
+    if (observacao) {
+        texto += `\n\n*Observação:*\n${observacao}`;
+    }
 
-            texto += "\n_______________________________";
+    texto += "\n_______________________________";
 
-            document.getElementById('dadosSalvos').textContent = texto;
-        }
+    document.getElementById('dadosSalvos').textContent = texto;
+}
 
-        function concluirAtendimento() {
-            let status = document.getElementById("statusProdutivo").value;
-            let contagemProdutivas = parseInt(localStorage.getItem('produtivas')) || 0;
-            let contagemNaoProdutivas = parseInt(localStorage.getItem('naoprodutivas')) || 0;
+function concluirAtendimento() {
+    let status = document.getElementById("statusProdutivo").value;
+    let contagemProdutivas = parseInt(localStorage.getItem('produtivas')) || 0;
+    let contagemNaoProdutivas = parseInt(localStorage.getItem('naoprodutivas')) || 0;
 
-            if (status === "Produtiva") localStorage.setItem('produtivas', contagemProdutivas + 1);
-            else if (status === "Não Produtiva") localStorage.setItem('naoprodutivas', contagemNaoProdutivas + 1);
+    if (status === "Produtiva ✅") {
+        localStorage.setItem('produtivas', contagemProdutivas + 1);
+    } else if (status === "Não Produtiva ❌") {
+        localStorage.setItem('naoprodutivas', contagemNaoProdutivas + 1);
+    }
 
-            document.getElementById('novoAtendimento').classList.add('ativo');
-        }
+    let textoFinal = document.getElementById('dadosSalvos').textContent;
+    navigator.clipboard.writeText(textoFinal).then(() => {
+        alert("Texto copiado para a área de transferência!");
+    });
 
-        function novoAtendimento() {
-            if (!document.getElementById('novoAtendimento').classList.contains('ativo')) return;
+    document.getElementById('novoAtendimento').classList.add('ativo');
+}
 
-            localStorage.removeItem('serviceactual');
-            document.getElementById('novoAtendimento').classList.remove('ativo');
+function novoAtendimento() {
+    if (!document.getElementById('novoAtendimento').classList.contains('ativo')) return;
 
-            atualizarVisualizacao();
-        }
+    let rotaAtual = parseInt(localStorage.getItem('contadorRota')) || 1;
+    let atendimentoAtual = parseInt(localStorage.getItem('atendimentoId')) || 0;
 
-        window.onload = carregarPreferencias;
+    rotaAtual++;
+    atendimentoAtual++;
+
+    localStorage.setItem('contadorRota', rotaAtual.toString().padStart(2, '0'));
+    localStorage.setItem('atendimentoId', atendimentoAtual.toString());
+
+    document.getElementById('contadorRota').textContent = rotaAtual.toString().padStart(2, '0');
+    document.getElementById('atendimentoId').value = atendimentoAtual.toString();
+
+    localStorage.removeItem('serviceactual');
+
+    document.getElementById('novoAtendimento').classList.remove('ativo');
+    atualizarVisualizacao();
+}
+
+window.onload = carregarPreferencias;
     </script>
 
 </body>
