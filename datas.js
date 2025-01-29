@@ -64,7 +64,7 @@ let faturaCPFL = document.querySelector("#CPFL-valor");
 
 
     
-    for (let index = 6; index < faturas.length; index++) {
+    for (let index = 0; index < faturas.length; index++) {
         
         let number = parseFloat(faturas[index]);
         let percent = (number*mePercent) / 100;
@@ -73,8 +73,8 @@ let faturaCPFL = document.querySelector("#CPFL-valor");
     if(curMes== 12){
         curMes=0;
     }
-    if(curMes>12){
-        curMes= index-6;
+    if(curMes<12){
+        curMes= index+6;
         console.log('sssssss');
     }
     console.log(percent+" -< "+mePercent+" "+meses[curMes]);
