@@ -64,7 +64,7 @@ let faturaCPFL = document.querySelector("#CPFL-valor");
 
 
     
-    for (let index = 0; index < faturas.length; index++) {
+    for (let index = 6; index < faturas.length; index++) {
         
         let number = parseFloat(faturas[index]);
         let percent = (number*mePercent) / 100;
