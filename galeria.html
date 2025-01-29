@@ -19,25 +19,27 @@
         header {
             background: black;
             color: white;
+            width: 100vw;
             padding: 10px 0;
             font-size: 24px;
         }
         .container {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
             margin-top: 20px;
-            padding: 10px;
         }
         .galeria {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-            flex: 2;
+            width: 100%;
         }
         .item {
-            width: 250px;
-            height: 200px;
+            width: 300px;
+            height: 250px;
             background: white;
             border-radius: 15px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -65,12 +67,41 @@
         .nome:hover {
             background: #bbb;
         }
+        .botoes {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+        }
+        button {
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .adicionar {
+            background: black;
+            color: white;
+            margin-bottom: 10px;
+        }
+        .editar {
+            background: blue;
+            color: white;
+        }
+        .deletar {
+            background: red;
+            color: white;
+        }
         .painel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 300px;
-            padding: 15px;
             background: white;
+            padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             text-align: left;
         }
         .painel input, .painel button {
@@ -83,38 +114,38 @@
         .painel button {
             background: black;
             color: white;
-            cursor: pointer;
         }
-        .painel button:hover {
-            background: #444;
+        .painel button.fechar {
+            background: gray;
         }
     </style>
 </head>
 <body>
     <header>Hospedado no GitHub</header>
 
-    <div class="container">
-        <!-- Painel para adicionar novos projetos -->
-        <div class="painel">
-            <h3>Adicionar Novo Projeto</h3>
-            <input type="text" id="nomeProjeto" placeholder="Nome do Projeto">
-            <input type="url" id="linkProjeto" placeholder="URL do Projeto">
-            <button onclick="adicionarProjeto()">Adicionar</button>
-            <button onclick="fazerBackup()">Fazer Backup</button>
-        </div>
+    <button class="adicionar" onclick="mostrarPainel()">Adicionar Projeto</button>
+    <input type="file" id="importarArquivo" accept=".txt" onchange="restaurarBackup()">
+    <button onclick="fazerBackup()">Fazer Backup</button>
 
-        <!-- Galeria dos projetos -->
-        <div class="galeria" id="galeria"></div>
+    <div class="galeria" id="galeria"></div>
+
+    <div class="painel" id="painel">
+        <h3 id="tituloPainel">Adicionar Novo Projeto</h3>
+        <input type="text" id="nomeProjeto" placeholder="Nome do Projeto">
+        <input type="url" id="linkProjeto" placeholder="URL do Projeto">
+        <button onclick="salvarProjeto()">Salvar</button>
+        <button class="fechar" onclick="fecharPainel()">Fechar</button>
     </div>
 
     <script>
-        // Função para carregar projetos do localStorage
+        let editandoIndex = null;
+
         function carregarProjetos() {
             let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
             let galeria = document.getElementById('galeria');
-            galeria.innerHTML = ''; // Limpa a galeria antes de adicionar os itens
+            galeria.innerHTML = '';
 
-            projetos.forEach(projeto => {
+            projetos.forEach((projeto, index) => {
                 let item = document.createElement('div');
                 item.classList.add('item');
 
@@ -126,49 +157,98 @@
                 nome.innerText = projeto.nome;
                 nome.onclick = () => window.location.href = projeto.link;
 
+                let botoes = document.createElement('div');
+                botoes.classList.add('botoes');
+
+                let btnEditar = document.createElement('button');
+                btnEditar.innerText = 'Editar';
+                btnEditar.classList.add('editar');
+                btnEditar.onclick = () => editarProjeto(index);
+
+                let btnDeletar = document.createElement('button');
+                btnDeletar.innerText = 'Deletar';
+                btnDeletar.classList.add('deletar');
+                btnDeletar.onclick = () => deletarProjeto(index);
+
+                botoes.appendChild(btnEditar);
+                botoes.appendChild(btnDeletar);
+
                 item.appendChild(iframe);
                 item.appendChild(nome);
+                item.appendChild(botoes);
+
                 galeria.appendChild(item);
             });
         }
 
-        // Função para adicionar um novo projeto ao localStorage
-        function adicionarProjeto() {
+        function mostrarPainel() {
+            document.getElementById('painel').style.display = 'block';
+            document.getElementById('nomeProjeto').value = '';
+            document.getElementById('linkProjeto').value = '';
+            document.getElementById('tituloPainel').innerText = 'Adicionar Novo Projeto';
+            editandoIndex = null;
+        }
+
+        function fecharPainel() {
+            document.getElementById('painel').style.display = 'none';
+        }
+
+        function salvarProjeto() {
             let nome = document.getElementById('nomeProjeto').value.trim();
             let link = document.getElementById('linkProjeto').value.trim();
-
             if (nome === '' || link === '') {
                 alert('Preencha todos os campos!');
                 return;
             }
 
             let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
-            projetos.push({ nome, link });
+
+            if (editandoIndex !== null) {
+                projetos[editandoIndex] = { nome, link };
+            } else {
+                projetos.push({ nome, link });
+            }
 
             localStorage.setItem('projetos', JSON.stringify(projetos));
             carregarProjetos();
-
-            // Limpa os campos de entrada
-            document.getElementById('nomeProjeto').value = '';
-            document.getElementById('linkProjeto').value = '';
+            fecharPainel();
         }
 
-        // Função para fazer backup dos dados do localStorage
-        function fazerBackup() {
-            let projetos = localStorage.getItem('projetos');
-            if (!projetos) {
-                alert('Nenhum projeto salvo!');
-                return;
-            }
+        function editarProjeto(index) {
+            let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
+            document.getElementById('nomeProjeto').value = projetos[index].nome;
+            document.getElementById('linkProjeto').value = projetos[index].link;
+            document.getElementById('tituloPainel').innerText = 'Editar Projeto';
+            editandoIndex = index;
+            mostrarPainel();
+        }
 
-            let blob = new Blob([projetos], { type: 'text/plain' });
+        function deletarProjeto(index) {
+            let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
+            projetos.splice(index, 1);
+            localStorage.setItem('projetos', JSON.stringify(projetos));
+            carregarProjetos();
+        }
+
+        function fazerBackup() {
+            let dados = localStorage.getItem('projetos');
+            let blob = new Blob([dados], { type: 'text/plain' });
             let link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = 'backup_projetos.txt';
             link.click();
         }
 
-        // Carregar os projetos ao iniciar a página
+        function restaurarBackup() {
+            let file = document.getElementById('importarArquivo').files[0];
+            let reader = new FileReader();
+            reader.onload = () => {
+                localStorage.setItem('projetos', reader.result);
+                carregarProjetos();
+            };
+            reader.readAsText(file);
+        }
+
         carregarProjetos();
     </script>
 </body>
