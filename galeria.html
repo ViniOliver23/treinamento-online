@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria - Hospedado no GitHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: gray;
+            text-align: center;
+            padding: 20px;
+        }
+        header {
+            background: black;
+            color: white;
+            padding: 10px 0;
+            font-size: 24px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 10px;
+        }
+        .galeria {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            flex: 2;
+        }
+        .item {
+            width: 250px;
+            height: 200px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+        }
+        iframe {
+            width: 100%;
+            height: 70%;
+            border: none;
+        }
+        .nome {
+            font-size: 16px;
+            font-weight: bold;
+            padding: 5px;
+            background: #ddd;
+            width: 100%;
+            text-align: center;
+            cursor: pointer;
+        }
+        .nome:hover {
+            background: #bbb;
+        }
+        .painel {
+            width: 300px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+        .painel input, .painel button {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .painel button {
+            background: black;
+            color: white;
+            cursor: pointer;
+        }
+        .painel button:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body>
+    <header>Hospedado no GitHub</header>
+
+    <div class="container">
+        <!-- Painel para adicionar novos projetos -->
+        <div class="painel">
+            <h3>Adicionar Novo Projeto</h3>
+            <input type="text" id="nomeProjeto" placeholder="Nome do Projeto">
+            <input type="url" id="linkProjeto" placeholder="URL do Projeto">
+            <button onclick="adicionarProjeto()">Adicionar</button>
+            <button onclick="fazerBackup()">Fazer Backup</button>
+        </div>
+
+        <!-- Galeria dos projetos -->
+        <div class="galeria" id="galeria"></div>
+    </div>
+
+    <script>
+        // Função para carregar projetos do localStorage
+        function carregarProjetos() {
+            let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
+            let galeria = document.getElementById('galeria');
+            galeria.innerHTML = ''; // Limpa a galeria antes de adicionar os itens
+
+            projetos.forEach(projeto => {
+                let item = document.createElement('div');
+                item.classList.add('item');
+
+                let iframe = document.createElement('iframe');
+                iframe.src = projeto.link;
+
+                let nome = document.createElement('div');
+                nome.classList.add('nome');
+                nome.innerText = projeto.nome;
+                nome.onclick = () => window.location.href = projeto.link;
+
+                item.appendChild(iframe);
+                item.appendChild(nome);
+                galeria.appendChild(item);
+            });
+        }
+
+        // Função para adicionar um novo projeto ao localStorage
+        function adicionarProjeto() {
+            let nome = document.getElementById('nomeProjeto').value.trim();
+            let link = document.getElementById('linkProjeto').value.trim();
+
+            if (nome === '' || link === '') {
+                alert('Preencha todos os campos!');
+                return;
+            }
+
+            let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
+            projetos.push({ nome, link });
+
+            localStorage.setItem('projetos', JSON.stringify(projetos));
+            carregarProjetos();
+
+            // Limpa os campos de entrada
+            document.getElementById('nomeProjeto').value = '';
+            document.getElementById('linkProjeto').value = '';
+        }
+
+        // Função para fazer backup dos dados do localStorage
+        function fazerBackup() {
+            let projetos = localStorage.getItem('projetos');
+            if (!projetos) {
+                alert('Nenhum projeto salvo!');
+                return;
+            }
+
+            let blob = new Blob([projetos], { type: 'text/plain' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'backup_projetos.txt';
+            link.click();
+        }
+
+        // Carregar os projetos ao iniciar a página
+        carregarProjetos();
+    </script>
+</body>
+</html>
