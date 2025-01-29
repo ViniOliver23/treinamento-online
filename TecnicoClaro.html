@@ -10,6 +10,8 @@
         button { cursor: pointer; }
         .horario-selecionado { background-color: blue; color: white; }
         #dadosSalvos { white-space: pre-wrap; background: #f4f4f4; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        #novoAtendimento { background: gray; color: white; pointer-events: none; }
+        #novoAtendimento.ativo { background: blue; pointer-events: auto; }
     </style>
 </head>
 <body>
@@ -24,6 +26,9 @@
 
     <h2>Formulário de Atendimento</h2>
     
+    <label>ID do Atendimento:</label>
+    <input type="number" id="atendimentoId" readonly>
+
     <label>Rota:</label>
     <span id="contadorRota">01</span>
 
@@ -49,27 +54,33 @@
     <div id="dadosSalvos"></div>
 
     <button style="background: green; color: white;" onclick="concluirAtendimento()">Concluir e Copiar ✅</button>
-    <button style="background: red; color: white;" onclick="novoAtendimento()">Novo Atendimento</button>
+    <button id="novoAtendimento" onclick="novoAtendimento()">Novo Atendimento</button>
 
     <script>
         function carregarPreferencias() {
             const modoSalvo = localStorage.getItem('modoOperacional') || 'Com Padrinho';
             document.getElementById('modoOperacional').value = modoSalvo;
 
-            const rotaAtual = localStorage.getItem('contadorRota') || '01';
-            document.getElementById('contadorRota').textContent = rotaAtual;
-
-            const servicoSalvo = JSON.parse(localStorage.getItem('serviceactual')) || {};
-            if (servicoSalvo.tipoServico) document.getElementById('tipoServico').value = servicoSalvo.tipoServico;
-            if (servicoSalvo.materiais) document.getElementById('materiaisInstalados').value = servicoSalvo.materiais;
-            if (servicoSalvo.observacao) document.getElementById('observacao').value = servicoSalvo.observacao;
-
+            verificarData(); // Reseta o contador se for um novo dia
             atualizarVisualizacao();
         }
 
+        function verificarData() {
+            const hoje = new Date().toLocaleDateString();
+            const ultimaData = localStorage.getItem('ultimaData');
+
+            if (ultimaData !== hoje) {
+                localStorage.setItem('ultimaData', hoje);
+                localStorage.setItem('contadorRota', '01');
+                localStorage.setItem('atendimentoId', '0');
+            }
+
+            document.getElementById('contadorRota').textContent = localStorage.getItem('contadorRota') || '01';
+            document.getElementById('atendimentoId').value = localStorage.getItem('atendimentoId') || '0';
+        }
+
         function salvarModoOperacional() {
-            const modo = document.getElementById('modoOperacional').value;
-            localStorage.setItem('modoOperacional', modo);
+            localStorage.setItem('modoOperacional', document.getElementById('modoOperacional').value);
         }
 
         function salvarHora(tipo, botao) {
@@ -139,17 +150,24 @@ Fim do OS:       *${dados.fimAtendimento || '-'}*
                 alert("Dados copiados!");
             });
 
-            let rotaAtual = parseInt(document.getElementById('contadorRota').textContent);
+            let rotaAtual = parseInt(localStorage.getItem('contadorRota')) || 1;
             localStorage.setItem('contadorRota', (rotaAtual + 1).toString().padStart(2, '0'));
+
+            let atendimentoAtual = parseInt(localStorage.getItem('atendimentoId')) || 0;
+            localStorage.setItem('atendimentoId', (atendimentoAtual + 1).toString());
+
+            document.getElementById('novoAtendimento').classList.add('ativo');
         }
 
         function novoAtendimento() {
+            if (!document.getElementById('novoAtendimento').classList.contains('ativo')) return;
+
             localStorage.removeItem('serviceactual');
             document.getElementById('tipoServico').value = "Adesão";
             document.getElementById('materiaisInstalados').value = "";
             document.getElementById('observacao').value = "";
-
             document.querySelectorAll('.horario-selecionado').forEach(btn => btn.classList.remove('horario-selecionado'));
+            document.getElementById('novoAtendimento').classList.remove('ativo');
 
             atualizarVisualizacao();
         }
