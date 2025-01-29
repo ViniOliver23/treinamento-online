@@ -6,7 +6,9 @@
     <title>Atendimento Diário</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
-        select, button, input { margin: 5px; padding: 10px; font-size: 16px; }
+        select, button, input, textarea { margin: 5px; padding: 10px; font-size: 16px; }
+        button { cursor: pointer; }
+        .horario-selecionado { background-color: blue; color: white; }
         #dadosSalvos { white-space: pre-wrap; background: #f4f4f4; padding: 10px; border-radius: 5px; margin-top: 10px; }
     </style>
 </head>
@@ -21,6 +23,10 @@
     </select>
 
     <h2>Formulário de Atendimento</h2>
+    
+    <label>Rota:</label>
+    <span id="contadorRota">01</span>
+
     <label>Tipo de Serviço:</label>
     <select id="tipoServico">
         <option value="Adesão">Adesão</option>
@@ -29,24 +35,35 @@
     </select>
 
     <h3>Horários</h3>
-    <button onclick="salvarHora('emRota')">Em Rota</button>
-    <button onclick="salvarHora('inicioOS')">Início da OS</button>
-    <button onclick="salvarHora('fimAtendimento')">Fim do Atendimento</button>
+    <button id="btnRota" onclick="salvarHora('emRota', this)">Em Rota</button>
+    <button id="btnInicioOS" onclick="salvarHora('inicioOS', this)">Início da OS</button>
+    <button id="btnFimOS" onclick="salvarHora('fimAtendimento', this)">Fim do Atendimento</button>
+
+    <h3>Materiais Instalados:</h3>
+    <textarea id="materiaisInstalados" rows="4" placeholder="Digite os materiais, um por linha"></textarea>
+
+    <h3>Observação:</h3>
+    <textarea id="observacao" rows="3" placeholder="Exemplo: Não houve danos no local..."></textarea>
 
     <h3>Dados Salvos:</h3>
     <div id="dadosSalvos"></div>
 
-    <button onclick="concluirAtendimento()">Concluir e Copiar</button>
-    <button onclick="novoAtendimento()">Novo Atendimento</button>
+    <button style="background: green; color: white;" onclick="concluirAtendimento()">Concluir e Copiar ✅</button>
+    <button style="background: red; color: white;" onclick="novoAtendimento()">Novo Atendimento</button>
 
     <script>
-        // Carregar preferências e dados salvos
         function carregarPreferencias() {
             const modoSalvo = localStorage.getItem('modoOperacional') || 'Com Padrinho';
             document.getElementById('modoOperacional').value = modoSalvo;
 
+            const rotaAtual = localStorage.getItem('contadorRota') || '01';
+            document.getElementById('contadorRota').textContent = rotaAtual;
+
             const servicoSalvo = JSON.parse(localStorage.getItem('serviceactual')) || {};
             if (servicoSalvo.tipoServico) document.getElementById('tipoServico').value = servicoSalvo.tipoServico;
+            if (servicoSalvo.materiais) document.getElementById('materiaisInstalados').value = servicoSalvo.materiais;
+            if (servicoSalvo.observacao) document.getElementById('observacao').value = servicoSalvo.observacao;
+
             atualizarVisualizacao();
         }
 
@@ -55,38 +72,85 @@
             localStorage.setItem('modoOperacional', modo);
         }
 
-        function salvarHora(tipo) {
+        function salvarHora(tipo, botao) {
             const agora = new Date().toLocaleTimeString();
             let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
             dados[tipo] = agora;
             localStorage.setItem('serviceactual', JSON.stringify(dados));
+
+            botao.classList.add('horario-selecionado');
             atualizarVisualizacao();
         }
 
         function atualizarVisualizacao() {
             let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
-            document.getElementById('dadosSalvos').textContent = 
-                `Tipo de Serviço: ${document.getElementById('tipoServico').value || '-'}
-                \nEm Rota: ${dados.emRota || '-'}
-                \nInício da OS: ${dados.inicioOS || '-'}
-                \nFim do Atendimento: ${dados.fimAtendimento || '-'}`;
+            let materiais = document.getElementById('materiaisInstalados').value.trim();
+            let observacao = document.getElementById('observacao').value.trim();
+
+            let texto = `*Rota ${document.getElementById('contadorRota').textContent}* - Produtiva ✅
+${document.getElementById('modoOperacional').value}
+_______________________________
+Tipo de Serviço: *${document.getElementById('tipoServico').value}*
+            
+Início da Rota:  *${dados.emRota || '-'}*
+Início da OS:     *${dados.inicioOS || '-'}*
+Fim do OS:       *${dados.fimAtendimento || '-'}*
+`;
+
+            if (materiais) {
+                texto += `\n*Materiais Instalados:*\n   •${materiais.split('\n').join('\n   •')}`;
+            }
+
+            if (observacao) {
+                texto += `\n\n*Observação:*\n${observacao}`;
+            }
+
+            texto += "\n_______________________________";
+
+            document.getElementById('dadosSalvos').textContent = texto;
         }
 
         function concluirAtendimento() {
             let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
-            let texto = `Tipo de Serviço: ${document.getElementById('tipoServico').value}
-            \nEm Rota: ${dados.emRota || '-'}
-            \nInício da OS: ${dados.inicioOS || '-'}
-            \nFim do Atendimento: ${dados.fimAtendimento || '-'}`;
+            let materiais = document.getElementById('materiaisInstalados').value.trim();
+            let observacao = document.getElementById('observacao').value.trim();
+
+            let texto = `*Rota ${document.getElementById('contadorRota').textContent}* - Produtiva ✅
+${document.getElementById('modoOperacional').value}
+_______________________________
+Tipo de Serviço: *${document.getElementById('tipoServico').value}*
+            
+Início da Rota:  *${dados.emRota || '-'}*
+Início da OS:     *${dados.inicioOS || '-'}*
+Fim do OS:       *${dados.fimAtendimento || '-'}*
+`;
+
+            if (materiais) {
+                texto += `\n*Materiais Instalados:*\n   •${materiais.split('\n').join('\n   •')}`;
+            }
+
+            if (observacao) {
+                texto += `\n\n*Observação:*\n${observacao}`;
+            }
+
+            texto += "\n_______________________________";
 
             navigator.clipboard.writeText(texto).then(() => {
                 alert("Dados copiados!");
             });
+
+            let rotaAtual = parseInt(document.getElementById('contadorRota').textContent);
+            localStorage.setItem('contadorRota', (rotaAtual + 1).toString().padStart(2, '0'));
         }
 
         function novoAtendimento() {
             localStorage.removeItem('serviceactual');
             document.getElementById('tipoServico').value = "Adesão";
+            document.getElementById('materiaisInstalados').value = "";
+            document.getElementById('observacao').value = "";
+
+            document.querySelectorAll('.horario-selecionado').forEach(btn => btn.classList.remove('horario-selecionado'));
+
             atualizarVisualizacao();
         }
 
