@@ -77,6 +77,10 @@ let faturaCPFL = document.querySelector("#CPFL-valor");
         curMes= index+6;
         console.log('sssssss');
     }
+    if(curMes<12 && curMes==0){
+        curMes= index-6;
+        console.log('sssssss');
+    }
     console.log(percent+" -< "+mePercent+" "+meses[curMes]);
     console.log(index+" "+curMes)
     console.log("casa1 => "+percent);
