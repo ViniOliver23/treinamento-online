@@ -42,8 +42,8 @@
     <h3>Serviço foi produtivo?</h3>
     <select id="statusProdutivo" onchange="validarProdutividade()">
         <option value="">Selecione</option>
-        <option value="Produtiva">Produtiva ✅</option>
-        <option value="Não Produtiva">Não Produtiva ❌</option>
+        <option value="Produtiva ✅">Produtiva ✅</option>
+        <option value="Não Produtiva ❌">Não Produtiva ❌</option>
     </select>
 
     <h3>Horários</h3>
@@ -121,7 +121,7 @@
             let observacao = document.getElementById('observacao').value.trim();
             let statusProdutivo = document.getElementById('statusProdutivo').value || "Não informado";
 
-            let texto = `*Rota ${document.getElementById('contadorRota').textContent}* - ${statusProdutivo} ✅
+            let texto = `*Rota ${document.getElementById('contadorRota').textContent}* - ${statusProdutivo}
 ${document.getElementById('modoOperacional').value}
 _______________________________
 Tipo de Serviço: *${document.getElementById('tipoServico').value}*
