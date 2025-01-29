@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atendimento Diário</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        select, button, input { margin: 5px; padding: 10px; font-size: 16px; }
+        #dadosSalvos { white-space: pre-wrap; background: #f4f4f4; padding: 10px; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Modo Operacional</h2>
+    <select id="modoOperacional" onchange="salvarModoOperacional()">
+        <option value="Com Padrinho">Com Padrinho</option>
+        <option value="Técnico de Instalação">Técnico de Instalação</option>
+        <option value="Técnico de VT">Técnico de VT</option>
+        <option value="Técnico com Afiliado">Técnico com Afiliado</option>
+    </select>
+
+    <h2>Formulário de Atendimento</h2>
+    <label>Tipo de Serviço:</label>
+    <select id="tipoServico">
+        <option value="Adesão">Adesão</option>
+        <option value="Mudança de Pacote">Mudança de Pacote</option>
+        <option value="Visita Técnica">Visita Técnica</option>
+    </select>
+
+    <h3>Horários</h3>
+    <button onclick="salvarHora('emRota')">Em Rota</button>
+    <button onclick="salvarHora('inicioOS')">Início da OS</button>
+    <button onclick="salvarHora('fimAtendimento')">Fim do Atendimento</button>
+
+    <h3>Dados Salvos:</h3>
+    <div id="dadosSalvos"></div>
+
+    <button onclick="concluirAtendimento()">Concluir e Copiar</button>
+    <button onclick="novoAtendimento()">Novo Atendimento</button>
+
+    <script>
+        // Carregar preferências e dados salvos
+        function carregarPreferencias() {
+            const modoSalvo = localStorage.getItem('modoOperacional') || 'Com Padrinho';
+            document.getElementById('modoOperacional').value = modoSalvo;
+
+            const servicoSalvo = JSON.parse(localStorage.getItem('serviceactual')) || {};
+            if (servicoSalvo.tipoServico) document.getElementById('tipoServico').value = servicoSalvo.tipoServico;
+            atualizarVisualizacao();
+        }
+
+        function salvarModoOperacional() {
+            const modo = document.getElementById('modoOperacional').value;
+            localStorage.setItem('modoOperacional', modo);
+        }
+
+        function salvarHora(tipo) {
+            const agora = new Date().toLocaleTimeString();
+            let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
+            dados[tipo] = agora;
+            localStorage.setItem('serviceactual', JSON.stringify(dados));
+            atualizarVisualizacao();
+        }
+
+        function atualizarVisualizacao() {
+            let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
+            document.getElementById('dadosSalvos').textContent = 
+                `Tipo de Serviço: ${document.getElementById('tipoServico').value || '-'}
+                \nEm Rota: ${dados.emRota || '-'}
+                \nInício da OS: ${dados.inicioOS || '-'}
+                \nFim do Atendimento: ${dados.fimAtendimento || '-'}`;
+        }
+
+        function concluirAtendimento() {
+            let dados = JSON.parse(localStorage.getItem('serviceactual')) || {};
+            let texto = `Tipo de Serviço: ${document.getElementById('tipoServico').value}
+            \nEm Rota: ${dados.emRota || '-'}
+            \nInício da OS: ${dados.inicioOS || '-'}
+            \nFim do Atendimento: ${dados.fimAtendimento || '-'}`;
+
+            navigator.clipboard.writeText(texto).then(() => {
+                alert("Dados copiados!");
+            });
+        }
+
+        function novoAtendimento() {
+            localStorage.removeItem('serviceactual');
+            document.getElementById('tipoServico').value = "Adesão";
+            atualizarVisualizacao();
+        }
+
+        window.onload = carregarPreferencias;
+    </script>
+
+</body>
+</html>
