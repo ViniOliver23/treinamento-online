@@ -50,24 +50,45 @@
         <button onclick="adicionarEquipamento()">Adicionar Equipamento</button>
         <div id="equipamentos"></div>
         <textarea id="resultadoTransferencia" readonly></textarea>
-        <button onclick="gerarTextoTransferencia()">Gerar Transferência</button>
-        <button onclick="copiarTextoTransferencia()">Copiar Transferência</button>
+        <button onclick="copiarTextoTransferencia()">Coletar Informação</button>
     </div>
 
     <script>
+        // Verifica se o nome do usuário já está salvo, caso contrário, pede para salvar
+        if (!localStorage.getItem("username")) {
+            const nomeUsuario = prompt("Digite seu nome para salvar:");
+            localStorage.setItem("username", nomeUsuario);
+        }
+
+        // Função para registrar horário de ida e volta e salvar no localStorage
         function registrarHorario(tipo) {
             const agora = new Date();
             const hora = agora.getHours().toString().padStart(2, '0');
             const minutos = agora.getMinutes().toString().padStart(2, '0');
-            document.getElementById(tipo === 'ida' ? 'horaIda' : 'horaVolta').innerText = `${hora}:${minutos}`;
+            const horaFormatada = `${hora}:${minutos}`;
+
+            if (tipo === 'ida') {
+                document.getElementById('horaIda').innerText = horaFormatada;
+                localStorage.setItem('almocoIda', horaFormatada);
+            } else {
+                document.getElementById('horaVolta').innerText = horaFormatada;
+                localStorage.setItem('almocoVolta', horaFormatada);
+            }
+
+            // Salva os horários completos no localStorage
+            if (localStorage.getItem('almocoIda') && localStorage.getItem('almocoVolta')) {
+                localStorage.setItem('almoco', `*Registro de Almoço*\nIda: ${localStorage.getItem('almocoIda')} | Volta: ${localStorage.getItem('almocoVolta')}`);
+            }
         }
 
+        // Função para copiar os horários registrados
         function copiarTexto(id1, id2) {
             const texto = `Ida: ${document.getElementById(id1).innerText} | Volta: ${document.getElementById(id2).innerText}`;
             navigator.clipboard.writeText(texto);
             alert("Horários copiados!");
         }
 
+        // Função para adicionar equipamentos
         function adicionarEquipamento() {
             const container = document.getElementById("equipamentos");
             const div = document.createElement("div");
@@ -83,9 +104,11 @@
             `;
 
             container.appendChild(div);
+            atualizarTransferencia(); // Atualiza a transferência automaticamente
         }
 
-        function gerarTextoTransferencia() {
+        // Função para gerar e atualizar a transferência automaticamente
+        function atualizarTransferencia() {
             const usuario = localStorage.getItem("username") || "Usuário Desconhecido";
             const destinatario = document.getElementById("destinatario").value.trim() || "Destinatário Não Informado";
             const equipamentos = document.querySelectorAll(".tipoEquipamento");
@@ -104,11 +127,15 @@
             document.getElementById("resultadoTransferencia").value = texto;
         }
 
+        // Função para copiar o texto da transferência
         function copiarTextoTransferencia() {
             const texto = document.getElementById("resultadoTransferencia").value;
             navigator.clipboard.writeText(texto);
-            alert("Transferência copiada!");
+            alert("Informação copiada!");
         }
+
+        // Atualiza a transferência sempre que o campo "destinatário" ou os equipamentos forem alterados
+        document.getElementById("destinatario").addEventListener("input", atualizarTransferencia);
     </script>
 
 </body>
