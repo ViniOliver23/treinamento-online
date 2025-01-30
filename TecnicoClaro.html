@@ -171,7 +171,7 @@ function novoAtendimento() {
     if (!document.getElementById('novoAtendimento').classList.contains('ativo')) return;
 
     let rotaAtual = parseInt(localStorage.getItem('contadorRota')) || 1;
-    let atendimentoAtual = parseInt(localStorage.getItem('atendimentoId')) || 0;
+    let atendimentoAtual = parseInt(localStorage.getItem('atendimentoId'));
 
     rotaAtual++;
     atendimentoAtual++;
