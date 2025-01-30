@@ -3,50 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeria - Hospedado no GitHub</title>
+    <title>Editor e Galeria de Projetos</title>
     <style>
-        * {
+        body {
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-        body {
-            background-color: gray;
-            text-align: center;
-            padding: 20px;
+            background-color: #272822; /* Cinza escuro */
+            color: white;
         }
         header {
-            background: black;
-            color: white;
-            width: 100vw;
-            padding: 10px 0;
-            font-size: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 20px;
+            padding: 10px 30px;
+            background-color: #1e1e1e; /* Cinza mais escuro */
         }
-        .menu {
-            cursor: pointer;
-            background: red;
-            padding: 5px 10px;
+        .input-group {
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 5px;
+            font-size: 1.2em;
+            margin: 0 5px;
+            background-color: #333;
+            color: white;
+            border: none;
             border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
         }
         .galeria {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 20px;
-            width: 100%;
-            margin-top: 20px;
+            padding: 20px;
         }
         .item {
             width: 300px;
             height: 250px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            background: #1e1e1e;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -58,41 +56,27 @@
             width: 100%;
             height: 70%;
             border: none;
+            background-color: white;
         }
         .nome {
             font-size: 16px;
             font-weight: bold;
             padding: 5px;
-            background: #ddd;
+            background: #444;
             width: 100%;
             text-align: center;
             cursor: pointer;
+        }
+        .nome:hover {
+            background: #666;
         }
         .botoes {
             display: flex;
             justify-content: space-around;
             width: 100%;
         }
-        button {
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-        }
-        .adicionar {
-            background: black;
-            color: white;
-            margin-bottom: 10px;
-        }
-        .editar {
-            background: blue;
-            color: white;
-        }
-        .deletar {
-            background: red;
-            color: white;
-            display: none;
-        }
+        .editar { background: gray; }
+        .deletar { background: black; }
         .painel {
             display: none;
             position: fixed;
@@ -100,141 +84,166 @@
             left: 50%;
             transform: translate(-50%, -50%);
             width: 300px;
-            background: white;
+            background: #333;
             padding: 15px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
             text-align: left;
+        }
+        .painel input, .painel button {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border: 1px solid #555;
+        }
+        .painel button {
+            background: black;
+            color: white;
+        }
+        .painel button.fechar {
+            background: gray;
         }
     </style>
 </head>
 <body>
-    <header>
-        Hospedado no GitHub
-        <button class="menu" onclick="toggleExcluir()">Excluir</button>
-    </header>
 
-    <button class="adicionar" onclick="mostrarPainel()">Adicionar Projeto</button>
-    <div class="galeria" id="galeria"></div>
-
-    <div class="painel" id="painel">
-        <h3 id="tituloPainel">Adicionar Novo Projeto</h3>
-        <input type="text" id="nomeProjeto" placeholder="Nome do Projeto">
-        <input type="url" id="linkProjeto" placeholder="URL do Projeto">
-        <button onclick="salvarProjeto()">Salvar</button>
-        <button onclick="fecharPainel()">Fechar</button>
+<header>
+    <div class="input-group">
+        <input type="text" id="fileName" placeholder="Nome do arquivo">
+        <button onclick="saveFile()">Salvar</button>
+        <button onclick="importFile()">Importar HTML</button>
+        <button onclick="clearEditor()">Limpar</button>
+        <button onclick="mostrarPainel()">Adicionar Projeto</button>
+        <button onclick="fazerBackup()">Backup</button>
+        <input type="file" id="importarArquivo" accept=".txt" onchange="restaurarBackup()">
     </div>
+</header>
 
-    <script>
-        let editandoIndex = null;
-        let modoExcluir = false;
+<div class="galeria" id="galeria"></div>
 
-        function carregarProjetos() {
-            let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
-            let galeria = document.getElementById('galeria');
-            galeria.innerHTML = '';
+<div class="painel" id="painel">
+    <h3 id="tituloPainel">Adicionar Novo Projeto</h3>
+    <input type="text" id="nomeProjeto" placeholder="Nome do Projeto">
+    <input type="url" id="linkProjeto" placeholder="URL do Projeto">
+    <button onclick="salvarProjeto()">Salvar</button>
+    <button class="fechar" onclick="fecharPainel()">Fechar</button>
+</div>
 
-            projetos.forEach((projeto, index) => {
-                let item = document.createElement('div');
-                item.classList.add('item');
+<script>
+    let editandoIndex = null;
 
-                let iframe = document.createElement('iframe');
-                iframe.src = projeto.link;
+    function carregarProjetos() {
+        let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
+        let galeria = document.getElementById('galeria');
+        galeria.innerHTML = '';
 
-                let nome = document.createElement('div');
-                nome.classList.add('nome');
-                nome.innerText = projeto.nome;
-                nome.onclick = () => window.open(projeto.link, '_blank');
+        projetos.forEach((projeto, index) => {
+            let item = document.createElement('div');
+            item.classList.add('item');
 
-                let botoes = document.createElement('div');
-                botoes.classList.add('botoes');
+            let iframe = document.createElement('iframe');
+            iframe.src = projeto.link;
 
-                let btnEditar = document.createElement('button');
-                btnEditar.innerText = 'Editar';
-                btnEditar.classList.add('editar');
-                btnEditar.onclick = () => editarProjeto(index);
+            let nome = document.createElement('div');
+            nome.classList.add('nome');
+            nome.innerText = projeto.nome;
+            nome.onclick = () => window.location.href = projeto.link;
 
-                let btnDeletar = document.createElement('button');
-                btnDeletar.innerText = 'Deletar';
-                btnDeletar.classList.add('deletar');
-                btnDeletar.style.display = modoExcluir ? 'inline-block' : 'none';
-                btnDeletar.onclick = () => confirmarExclusao(index);
+            let botoes = document.createElement('div');
+            botoes.classList.add('botoes');
 
-                botoes.appendChild(btnEditar);
-                botoes.appendChild(btnDeletar);
+            let btnEditar = document.createElement('button');
+            btnEditar.innerText = 'Editar';
+            btnEditar.classList.add('editar');
+            btnEditar.onclick = () => editarProjeto(index);
 
-                item.appendChild(iframe);
-                item.appendChild(nome);
-                item.appendChild(botoes);
+            let btnDeletar = document.createElement('button');
+            btnDeletar.innerText = 'Deletar';
+            btnDeletar.classList.add('deletar');
+            btnDeletar.onclick = () => deletarProjeto(index);
 
-                galeria.appendChild(item);
-            });
+            botoes.appendChild(btnEditar);
+            botoes.appendChild(btnDeletar);
+
+            item.appendChild(iframe);
+            item.appendChild(nome);
+            item.appendChild(botoes);
+
+            galeria.appendChild(item);
+        });
+    }
+
+    function mostrarPainel() {
+        document.getElementById('painel').style.display = 'block';
+        document.getElementById('nomeProjeto').value = '';
+        document.getElementById('linkProjeto').value = '';
+        document.getElementById('tituloPainel').innerText = 'Adicionar Novo Projeto';
+        editandoIndex = null;
+    }
+
+    function fecharPainel() {
+        document.getElementById('painel').style.display = 'none';
+    }
+
+    function salvarProjeto() {
+        let nome = document.getElementById('nomeProjeto').value.trim();
+        let link = document.getElementById('linkProjeto').value.trim();
+        if (nome === '' || link === '') {
+            alert('Preencha todos os campos!');
+            return;
         }
 
-        function toggleExcluir() {
-            modoExcluir = !modoExcluir;
-            document.querySelectorAll('.deletar').forEach(botao => {
-                botao.style.display = modoExcluir ? 'inline-block' : 'none';
-            });
+        let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
+
+        if (editandoIndex !== null) {
+            projetos[editandoIndex] = { nome, link };
+        } else {
+            projetos.push({ nome, link });
         }
 
-        function confirmarExclusao(index) {
-            let confirma = confirm("Tem certeza que deseja excluir este item?");
-            if (confirma) {
-                deletarProjeto(index);
-                toggleExcluir();
-            }
-        }
-
-        function mostrarPainel() {
-            document.getElementById('painel').style.display = 'block';
-            document.getElementById('nomeProjeto').value = '';
-            document.getElementById('linkProjeto').value = '';
-            document.getElementById('tituloPainel').innerText = 'Adicionar Novo Projeto';
-            editandoIndex = null;
-        }
-
-        function fecharPainel() {
-            document.getElementById('painel').style.display = 'none';
-        }
-
-        function salvarProjeto() {
-            let nome = document.getElementById('nomeProjeto').value.trim();
-            let link = document.getElementById('linkProjeto').value.trim();
-            if (nome === '' || link === '') {
-                alert('Preencha todos os campos!');
-                return;
-            }
-
-            let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
-            if (editandoIndex !== null) {
-                projetos[editandoIndex] = { nome, link };
-            } else {
-                projetos.push({ nome, link });
-            }
-
-            localStorage.setItem('projetos', JSON.stringify(projetos));
-            carregarProjetos();
-            fecharPainel();
-        }
-
-        function editarProjeto(index) {
-            let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
-            document.getElementById('nomeProjeto').value = projetos[index].nome;
-            document.getElementById('linkProjeto').value = projetos[index].link;
-            document.getElementById('tituloPainel').innerText = 'Editar Projeto';
-            editandoIndex = index;
-            mostrarPainel();
-        }
-
-        function deletarProjeto(index) {
-            let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
-            projetos.splice(index, 1);
-            localStorage.setItem('projetos', JSON.stringify(projetos));
-            carregarProjetos();
-        }
-
+        localStorage.setItem('projetos', JSON.stringify(projetos));
         carregarProjetos();
-    </script>
+        fecharPainel();
+    }
+
+    function editarProjeto(index) {
+        let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
+        document.getElementById('nomeProjeto').value = projetos[index].nome;
+        document.getElementById('linkProjeto').value = projetos[index].link;
+        document.getElementById('tituloPainel').innerText = 'Editar Projeto';
+        editandoIndex = index;
+        mostrarPainel();
+    }
+
+    function deletarProjeto(index) {
+        let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
+        projetos.splice(index, 1);
+        localStorage.setItem('projetos', JSON.stringify(projetos));
+        carregarProjetos();
+    }
+
+    function fazerBackup() {
+        let dados = localStorage.getItem('projetos');
+        let blob = new Blob([dados], { type: 'text/plain' });
+        let link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'backup_projetos.txt';
+        link.click();
+    }
+
+    function restaurarBackup() {
+        let file = document.getElementById('importarArquivo').files[0];
+        let reader = new FileReader();
+        reader.onload = () => {
+            localStorage.setItem('projetos', reader.result);
+            carregarProjetos();
+        };
+        reader.readAsText(file);
+    }
+
+    carregarProjetos();
+</script>
+
 </body>
 </html>
