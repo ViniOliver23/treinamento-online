@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Almoço e Transferências</title>
+    <style>
+        body {
+            background-color: #8B0000;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            background-color: #FFD700;
+            border: none;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+        input, select {
+            padding: 8px;
+            margin: 5px;
+        }
+        .section {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Registro de Almoço</h2>
+    <button onclick="registrarHorario('ida')">Registrar Ida</button>
+    <button onclick="registrarHorario('volta')">Registrar Volta</button>
+    <p><strong>Ida:</strong> <span id="horaIda">--:--</span></p>
+    <p><strong>Volta:</strong> <span id="horaVolta">--:--</span></p>
+    <button onclick="copiarTexto('horaIda', 'horaVolta')">Copiar Horários</button>
+
+    <div class="section">
+        <h2>Transferência de Equipamentos</h2>
+        <label>Para: <input type="text" id="destinatario" placeholder="Nome do destinatário"></label>
+        <button onclick="adicionarEquipamento()">Adicionar Equipamento</button>
+        <div id="equipamentos"></div>
+        <textarea id="resultadoTransferencia" readonly></textarea>
+        <button onclick="gerarTextoTransferencia()">Gerar Transferência</button>
+        <button onclick="copiarTextoTransferencia()">Copiar Transferência</button>
+    </div>
+
+    <script>
+        function registrarHorario(tipo) {
+            const agora = new Date();
+            const hora = agora.getHours().toString().padStart(2, '0');
+            const minutos = agora.getMinutes().toString().padStart(2, '0');
+            document.getElementById(tipo === 'ida' ? 'horaIda' : 'horaVolta').innerText = `${hora}:${minutos}`;
+        }
+
+        function copiarTexto(id1, id2) {
+            const texto = `Ida: ${document.getElementById(id1).innerText} | Volta: ${document.getElementById(id2).innerText}`;
+            navigator.clipboard.writeText(texto);
+            alert("Horários copiados!");
+        }
+
+        function adicionarEquipamento() {
+            const container = document.getElementById("equipamentos");
+            const div = document.createElement("div");
+
+            div.innerHTML = `
+                <select class="tipoEquipamento">
+                    <option value="MAC">MAC</option>
+                    <option value="CAID">CAID</option>
+                    <option value="SMART-CARD">SMART-CARD</option>
+                </select>
+                <input type="text" class="valorEquipamento" placeholder="Digite o código">
+                <button onclick="this.parentElement.remove()">Remover</button>
+            `;
+
+            container.appendChild(div);
+        }
+
+        function gerarTextoTransferencia() {
+            const usuario = localStorage.getItem("username") || "Usuário Desconhecido";
+            const destinatario = document.getElementById("destinatario").value.trim() || "Destinatário Não Informado";
+            const equipamentos = document.querySelectorAll(".tipoEquipamento");
+            const valores = document.querySelectorAll(".valorEquipamento");
+
+            let texto = `Transferência de:\n*${usuario}*\nPara:\n*"${destinatario}"*\n\nEquipamento(s):\n`;
+
+            equipamentos.forEach((equip, index) => {
+                const tipo = equip.value;
+                const valor = valores[index].value.trim();
+                if (valor) {
+                    texto += `   *• ${tipo}:  ${valor}*\n`;
+                }
+            });
+
+            document.getElementById("resultadoTransferencia").value = texto;
+        }
+
+        function copiarTextoTransferencia() {
+            const texto = document.getElementById("resultadoTransferencia").value;
+            navigator.clipboard.writeText(texto);
+            alert("Transferência copiada!");
+        }
+    </script>
+
+</body>
+</html>
