@@ -127,7 +127,7 @@
             const equipamentos = document.querySelectorAll(".tipoEquipamento");
             const valores = document.querySelectorAll(".valorEquipamento");
 
-            let texto = `Transferência de:\n*${usuario}*\nPara:\n*"${destinatario}"*\n\nEquipamento(s):\n`;
+            let texto = `Transferência de:\n*${usuario}*\nPara:\n*${destinatario}*\n\nEquipamento(s):\n`;
 
             equipamentos.forEach((equip, index) => {
                 const tipo = equip.value;
