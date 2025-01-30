@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalStorage - Tabela</title>
+    <style>
+        body {
+            background-color: #8B0000; /* Fundo vermelho escuro */
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid white;
+        }
+        th {
+            background-color: #5C0000;
+        }
+        td {
+            background-color: #700000;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Dados do localStorage</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Caminho</th>
+                <th>Dados</th>
+            </tr>
+        </thead>
+        <tbody id="storageTable">
+            <!-- Linhas de dados serão inseridas aqui -->
+        </tbody>
+    </table>
+
+    <script>
+        // Função para exibir os dados do localStorage
+        function displayLocalStorage() {
+            const tableBody = document.getElementById('storageTable');
+            tableBody.innerHTML = ''; // Limpa a tabela antes de preencher
+
+            // Itera por todos os itens no localStorage
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i); // Obtém o caminho (chave)
+                const value = localStorage.getItem(key); // Obtém os dados (valor)
+
+                // Cria uma nova linha na tabela
+                const row = document.createElement('tr');
+
+                // Cria e adiciona a célula para o caminho
+                const keyCell = document.createElement('td');
+                keyCell.textContent = key;
+                row.appendChild(keyCell);
+
+                // Cria e adiciona a célula para os dados
+                const valueCell = document.createElement('td');
+                valueCell.textContent = value;
+                row.appendChild(valueCell);
+
+                // Adiciona a linha na tabela
+                tableBody.appendChild(row);
+            }
+        }
+
+        // Chama a função para exibir os dados ao carregar a página
+        displayLocalStorage();
+    </script>
+
+</body>
+</html>
