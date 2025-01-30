@@ -60,8 +60,21 @@
             localStorage.setItem("username", nomeUsuario);
         }
 
+        // Verifica se os horários já foram registrados hoje
+        if (!localStorage.getItem('almocoData') || localStorage.getItem('almocoData') !== new Date().toISOString().split('T')[0]) {
+            localStorage.removeItem('almocoIda');
+            localStorage.removeItem('almocoVolta');
+            localStorage.removeItem('almoco');
+        }
+
         // Função para registrar horário de ida e volta e salvar no localStorage
         function registrarHorario(tipo) {
+            const hoje = new Date().toISOString().split('T')[0];
+            if (localStorage.getItem('almocoData') === hoje) {
+                alert("Você já registrou os horários de almoço hoje.");
+                return;
+            }
+
             const agora = new Date();
             const hora = agora.getHours().toString().padStart(2, '0');
             const minutos = agora.getMinutes().toString().padStart(2, '0');
@@ -75,8 +88,8 @@
                 localStorage.setItem('almocoVolta', horaFormatada);
             }
 
-            // Salva os horários completos no localStorage
             if (localStorage.getItem('almocoIda') && localStorage.getItem('almocoVolta')) {
+                localStorage.setItem('almocoData', hoje);
                 localStorage.setItem('almoco', `*Registro de Almoço*\nIda: ${localStorage.getItem('almocoIda')} | Volta: ${localStorage.getItem('almocoVolta')}`);
             }
         }
@@ -94,13 +107,13 @@
             const div = document.createElement("div");
 
             div.innerHTML = `
-                <select class="tipoEquipamento">
+                <select class="tipoEquipamento" onchange="atualizarTransferencia()">
                     <option value="MAC">MAC</option>
                     <option value="CAID">CAID</option>
                     <option value="SMART-CARD">SMART-CARD</option>
                 </select>
-                <input type="text" class="valorEquipamento" placeholder="Digite o código">
-                <button onclick="this.parentElement.remove()">Remover</button>
+                <input type="text" class="valorEquipamento" placeholder="Digite o código" oninput="atualizarTransferencia()">
+                <button onclick="this.parentElement.remove(); atualizarTransferencia()">Remover</button>
             `;
 
             container.appendChild(div);
