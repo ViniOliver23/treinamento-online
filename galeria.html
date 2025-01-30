@@ -3,131 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editor e Galeria de Projetos</title>
+    <title>Galeria de Projetos</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            background-color: #272822; /* Cinza escuro */
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #181818;
             color: white;
-        }
-        header {
-            padding: 10px 30px;
-            background-color: #1e1e1e; /* Cinza mais escuro */
-        }
-        .input-group {
-            margin-bottom: 10px;
-        }
-        button {
-            padding: 5px;
-            font-size: 1.2em;
-            margin: 0 5px;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #555;
-        }
-        .galeria {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
         }
-        .item {
-            width: 300px;
-            height: 250px;
-            background: #1e1e1e;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-            overflow: hidden;
+        /* MENU LATERAL */
+        .menu {
+            width: 80px;
+            height: 100vh;
+            background: #111;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
-            padding: 10px;
+            padding-top: 20px;
         }
-        iframe {
-            width: 100%;
-            height: 70%;
+        .menu button {
+            background: none;
             border: none;
-            background-color: white;
-        }
-        .nome {
-            font-size: 16px;
-            font-weight: bold;
-            padding: 5px;
-            background: #444;
-            width: 100%;
-            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            margin: 20px 0;
             cursor: pointer;
         }
-        .nome:hover {
+        .menu button:hover {
+            color: #aaa;
+        }
+        /* CONTEÚDO PRINCIPAL */
+        .conteudo {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .header input {
+            width: 200px;
+            padding: 8px;
+            font-size: 1em;
+            border-radius: 5px;
+            border: none;
+        }
+        .header button {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .header button:hover {
             background: #666;
         }
-        .botoes {
-            display: flex;
-            justify-content: space-around;
+        /* GALERIA */
+        .galeria {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: #222;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card iframe {
             width: 100%;
-        }
-        .editar { background: gray; }
-        .deletar { background: black; }
-        .painel {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 300px;
-            background: #333;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            text-align: left;
-        }
-        .painel input, .painel button {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border-radius: 5px;
-            border: 1px solid #555;
-        }
-        .painel button {
+            height: 140px;
             background: black;
-            color: white;
+            border: none;
         }
-        .painel button.fechar {
-            background: gray;
+        .card h3 {
+            padding: 10px;
+            text-align: center;
+            background: #333;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="input-group">
-        <input type="text" id="fileName" placeholder="Nome do arquivo">
-        <button onclick="saveFile()">Salvar</button>
-        <button onclick="importFile()">Importar HTML</button>
-        <button onclick="clearEditor()">Limpar</button>
-        <button onclick="mostrarPainel()">Adicionar Projeto</button>
+<!-- MENU LATERAL -->
+<div class="menu">
+    <button onclick="window.location.reload()">🏠</button>
+    <button onclick="mostrarPainel()">➕</button>
+</div>
+
+<!-- CONTEÚDO PRINCIPAL -->
+<div class="conteudo">
+    <div class="header">
+        <input type="text" id="fileName" placeholder="Nome do projeto">
         <button onclick="fazerBackup()">Backup</button>
         <input type="file" id="importarArquivo" accept=".txt" onchange="restaurarBackup()">
     </div>
-</header>
 
-<div class="galeria" id="galeria"></div>
+    <div class="galeria" id="galeria"></div>
+</div>
 
-<div class="painel" id="painel">
-    <h3 id="tituloPainel">Adicionar Novo Projeto</h3>
-    <input type="text" id="nomeProjeto" placeholder="Nome do Projeto">
-    <input type="url" id="linkProjeto" placeholder="URL do Projeto">
+<!-- PAINEL DE ADIÇÃO DE PROJETO -->
+<div id="painel" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #333; padding: 15px; border-radius: 10px; text-align: center;">
+    <h3>Adicionar Novo Projeto</h3>
+    <input type="text" id="nomeProjeto" placeholder="Nome do Projeto" style="width: 100%; padding: 8px; margin: 5px 0;">
+    <input type="url" id="linkProjeto" placeholder="URL do Projeto" style="width: 100%; padding: 8px; margin: 5px 0;">
     <button onclick="salvarProjeto()">Salvar</button>
-    <button class="fechar" onclick="fecharPainel()">Fechar</button>
+    <button onclick="fecharPainel()">Fechar</button>
 </div>
 
 <script>
@@ -139,38 +132,19 @@
         galeria.innerHTML = '';
 
         projetos.forEach((projeto, index) => {
-            let item = document.createElement('div');
-            item.classList.add('item');
+            let card = document.createElement('div');
+            card.classList.add('card');
+            card.onclick = () => window.open(projeto.link, '_blank');
 
             let iframe = document.createElement('iframe');
             iframe.src = projeto.link;
 
-            let nome = document.createElement('div');
-            nome.classList.add('nome');
+            let nome = document.createElement('h3');
             nome.innerText = projeto.nome;
-            nome.onclick = () => window.location.href = projeto.link;
 
-            let botoes = document.createElement('div');
-            botoes.classList.add('botoes');
-
-            let btnEditar = document.createElement('button');
-            btnEditar.innerText = 'Editar';
-            btnEditar.classList.add('editar');
-            btnEditar.onclick = () => editarProjeto(index);
-
-            let btnDeletar = document.createElement('button');
-            btnDeletar.innerText = 'Deletar';
-            btnDeletar.classList.add('deletar');
-            btnDeletar.onclick = () => deletarProjeto(index);
-
-            botoes.appendChild(btnEditar);
-            botoes.appendChild(btnDeletar);
-
-            item.appendChild(iframe);
-            item.appendChild(nome);
-            item.appendChild(botoes);
-
-            galeria.appendChild(item);
+            card.appendChild(iframe);
+            card.appendChild(nome);
+            galeria.appendChild(card);
         });
     }
 
@@ -178,7 +152,6 @@
         document.getElementById('painel').style.display = 'block';
         document.getElementById('nomeProjeto').value = '';
         document.getElementById('linkProjeto').value = '';
-        document.getElementById('tituloPainel').innerText = 'Adicionar Novo Projeto';
         editandoIndex = null;
     }
 
@@ -205,22 +178,6 @@
         localStorage.setItem('projetos', JSON.stringify(projetos));
         carregarProjetos();
         fecharPainel();
-    }
-
-    function editarProjeto(index) {
-        let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
-        document.getElementById('nomeProjeto').value = projetos[index].nome;
-        document.getElementById('linkProjeto').value = projetos[index].link;
-        document.getElementById('tituloPainel').innerText = 'Editar Projeto';
-        editandoIndex = index;
-        mostrarPainel();
-    }
-
-    function deletarProjeto(index) {
-        let projetos = JSON.parse(localStorage.getItem('projetos')) || [];
-        projetos.splice(index, 1);
-        localStorage.setItem('projetos', JSON.stringify(projetos));
-        carregarProjetos();
     }
 
     function fazerBackup() {
