@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Códigos de Baixa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        header {
+            background-color: #8B0000; /* Vermelho Escuro */
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .menu {
+            cursor: pointer;
+        }
+        .menu-items {
+            display: none;
+            flex-direction: column;
+            background-color: #8B0000;
+        }
+        .menu-items a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+        }
+        .menu-items a:hover {
+            background-color: #a52a2a;
+        }
+        .content {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Códigos de Baixa</h1>
+        <div class="menu" onclick="toggleMenu()">☰</div>
+        <div class="menu-items" id="menu-items">
+            <a href="#" onclick="showList()">Listar Códigos</a>
+        </div>
+    </header>
+    <div class="content">
+        <form onsubmit="addCodigo(event)">
+            <label for="codigo">Código de Baixa:</label>
+            <input type="text" id="codigo" name="codigo" required>
+            <label for="descricao">Descrição:</label>
+            <input type="text" id="descricao" name="descricao" required>
+            <label for="subfalha">Subfalha (Opcional):</label>
+            <input type="text" id="subfalha" name="subfalha">
+            <button type="submit">Adicionar Código</button>
+        </form>
+        <div id="lista-codigos" style="display:none;"></div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menuItems = document.getElementById('menu-items');
+            menuItems.style.display = menuItems.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function addCodigo(event) {
+            event.preventDefault();
+            const codigo = document.getElementById('codigo').value;
+            const descricao = document.getElementById('descricao').value;
+            const subfalha = document.getElementById('subfalha').value;
+            const codigoObj = { codigo, descricao, subfalha };
+
+            let codigosBaixa = localStorage.getItem('codigosBaixa');
+            codigosBaixa = codigosBaixa ? JSON.parse(codigosBaixa) : [];
+            codigosBaixa.push(codigoObj);
+            localStorage.setItem('codigosBaixa', JSON.stringify(codigosBaixa));
+
+            document.getElementById('codigo').value = '';
+            document.getElementById('descricao').value = '';
+            document.getElementById('subfalha').value = '';
+        }
+
+        function showList() {
+            const listaDiv = document.getElementById('lista-codigos');
+            let codigosBaixa = localStorage.getItem('codigosBaixa');
+            codigosBaixa = codigosBaixa ? JSON.parse(codigosBaixa) : [];
+            
+            if (codigosBaixa.length > 0) {
+                let html = '<ul>';
+                codigosBaixa.forEach(item => {
+                    html += `<li>${item.codigo}: ${item.descricao} ${item.subfalha ? '(Subfalha: ' + item.subfalha + ')' : ''}</li>`;
+                });
+                html += '</ul>';
+                listaDiv.innerHTML = html;
+                listaDiv.style.display = 'block';
+            } else {
+                listaDiv.innerHTML = '<p>Nenhum código de baixa encontrado.</p>';
+                listaDiv.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
