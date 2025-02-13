@@ -35,6 +35,16 @@
         .content {
             padding: 20px;
         }
+        .codigo-item {
+            padding: 10px;
+            list-style: none;
+        }
+        .codigo-item:nth-child(odd) {
+            background-color: #f0f0f0;
+        }
+        .codigo-item:nth-child(even) {
+            background-color: #d3d3d3;
+        }
     </style>
 </head>
 <body>
@@ -42,34 +52,53 @@
         <h1>Códigos de Baixa</h1>
         <div class="menu" onclick="toggleMenu()">☰</div>
         <div class="menu-items" id="menu-items">
-            <a href="#" onclick="showList()">Listar Códigos</a>
+            <a href="#" onclick="showForm()">Adicionar Código</a>
         </div>
     </header>
     <div class="content">
-        <form onsubmit="addCodigo(event)">
+        <form id="codigo-form" onsubmit="addCodigo(event)" style="display:none;">
             <label for="codigo">Código de Baixa:</label>
             <input type="text" id="codigo" name="codigo" required>
             <label for="descricao">Descrição:</label>
             <input type="text" id="descricao" name="descricao" required>
+            <label for="tipo">Tipo:</label>
+            <select id="tipo" name="tipo" required>
+                <option value="produtivo">Produtivo</option>
+                <option value="improdutivo">Improdutivo</option>
+            </select>
             <label for="subfalha">Subfalha (Opcional):</label>
             <input type="text" id="subfalha" name="subfalha">
             <button type="submit">Adicionar Código</button>
         </form>
-        <div id="lista-codigos" style="display:none;"></div>
+        <div id="lista-produtivo" class="codigo-lista">
+            <h2>Produtivo</h2>
+            <ul id="produtivo-list"></ul>
+        </div>
+        <div id="lista-improdutivo" class="codigo-lista">
+            <h2>Improdutivo</h2>
+            <ul id="improdutivo-list"></ul>
+        </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', showList);
+
         function toggleMenu() {
             const menuItems = document.getElementById('menu-items');
             menuItems.style.display = menuItems.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        function showForm() {
+            document.getElementById('codigo-form').style.display = 'block';
         }
 
         function addCodigo(event) {
             event.preventDefault();
             const codigo = document.getElementById('codigo').value;
             const descricao = document.getElementById('descricao').value;
+            const tipo = document.getElementById('tipo').value;
             const subfalha = document.getElementById('subfalha').value;
-            const codigoObj = { codigo, descricao, subfalha };
+            const codigoObj = { codigo, descricao, tipo, subfalha };
 
             let codigosBaixa = localStorage.getItem('codigosBaixa');
             codigosBaixa = codigosBaixa ? JSON.parse(codigosBaixa) : [];
@@ -79,25 +108,29 @@
             document.getElementById('codigo').value = '';
             document.getElementById('descricao').value = '';
             document.getElementById('subfalha').value = '';
+            showList();
         }
 
         function showList() {
-            const listaDiv = document.getElementById('lista-codigos');
+            const produtivoList = document.getElementById('produtivo-list');
+            const improdutivoList = document.getElementById('improdutivo-list');
             let codigosBaixa = localStorage.getItem('codigosBaixa');
             codigosBaixa = codigosBaixa ? JSON.parse(codigosBaixa) : [];
-            
-            if (codigosBaixa.length > 0) {
-                let html = '<ul>';
-                codigosBaixa.forEach(item => {
-                    html += `<li>${item.codigo}: ${item.descricao} ${item.subfalha ? '(Subfalha: ' + item.subfalha + ')' : ''}</li>`;
-                });
-                html += '</ul>';
-                listaDiv.innerHTML = html;
-                listaDiv.style.display = 'block';
-            } else {
-                listaDiv.innerHTML = '<p>Nenhum código de baixa encontrado.</p>';
-                listaDiv.style.display = 'block';
-            }
+
+            produtivoList.innerHTML = '';
+            improdutivoList.innerHTML = '';
+
+            codigosBaixa.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.className = 'codigo-item';
+                listItem.innerHTML = `#${item.codigo}: ${item.descricao} ${item.subfalha ? '(Subfalha: ' + item.subfalha + ')' : ''}`;
+                
+                if (item.tipo === 'produtivo') {
+                    produtivoList.appendChild(listItem);
+                } else {
+                    improdutivoList.appendChild(listItem);
+                }
+            });
         }
     </script>
 </body>
