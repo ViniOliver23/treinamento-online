@@ -14,31 +14,30 @@
             padding: 10px 20px;
             text-align: center;
         }
-        nav {
-            background-color: #333;
-            color: white;
-            padding: 10px;
-            text-align: center;
-        }
-        nav a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-        }
-        main {
+        section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
             padding: 20px;
         }
-        footer {
-            background-color: #333;
-            color: white;
-            padding: 10px;
+        .box {
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin: 10px;
+            padding: 20px;
             text-align: center;
+            width: 30%;
+            box-sizing: border-box;
+            transition: background-color 0.3s;
         }
-        img {
+        .box:hover {
+            background-color: #ddd;
+        }
+        .box a {
             display: block;
-            margin: 0 auto;
-            max-width: 100%;
-            height: auto;
+            color: #000;
+            text-decoration: none;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -46,18 +45,45 @@
     <header>
         <h1>Minha Página</h1>
     </header>
-    <nav>
-        <a href="pagina1.html">Página 1</a>
-        <a href="pagina2.html">Página 2</a>
-        <a href="pagina3.html">Página 3</a>
-    </nav>
-    <main>
-        <h2>Bem-vindo!</h2>
-        <p>Este é o conteúdo principal da página.</p>
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBLvY6B90A_JxtsbCelTFmHIyaX88NnNHofZ1wV_eoCYeYo9MB6aOz9jE&s=10" alt="Imagem">
-    </main>
-    <footer>
-        <p>Copyright © 2025 Minha Página</p>
-    </footer>
+    <section>
+        <div class="box">
+            <a href="pagina1.html">Página 1</a>
+        </div>
+        <div class="box">
+            <a href="pagina2.html">Página 2</a>
+        </div>
+        <div class="box">
+            <a href="pagina3.html">Página 3</a>
+        </div>
+        <div class="box">
+            <a href="pagina4.html">Página 4</a>
+        </div>
+        <div class="box">
+            <a href="pagina5.html">Página 5</a>
+        </div>
+        <div class="box">
+            <a href="pagina6.html">Página 6</a>
+        </div>
+    </section>
+    <section>
+        <div class="box">
+            <a href="pagina7.html">Página 7</a>
+        </div>
+        <div class="box">
+            <a href="pagina8.html">Página 8</a>
+        </div>
+        <div class="box">
+            <a href="pagina9.html">Página 9</a>
+        </div>
+        <div class="box">
+            <a href="pagina10.html">Página 10</a>
+        </div>
+        <div class="box">
+            <a href="pagina11.html">Página 11</a>
+        </div>
+        <div class="box">
+            <a href="pagina12.html">Página 12</a>
+        </div>
+    </section>
 </body>
 </html>
