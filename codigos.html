@@ -195,7 +195,7 @@ background-color: #708090;
             codigosBaixa.forEach(item => {
                 const listItem = document.createElement('li');
                 listItem.className = 'codigo-item';
-                listItem.innerHTML = `#${item.codigo}: ${item.descricao} ${item.subfalha ? '(Subfalha: ' + item.subfalha + ')' : ''}`;
+                listItem.innerHTML = `#${item.codigo} ${item.descricao} ${item.subfalha ? '(Subfalha: ' + item.subfalha + ')' : ''}`;
                 (item.tipo === 'produtivo' ? produtivoList : improdutivoList).appendChild(listItem);
             });
         }
