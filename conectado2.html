@@ -20,13 +20,16 @@
             justify-content: center;
             padding: 20px;
         }
+        .box-container {
+            text-align: center;
+            margin: 10px;
+            width: calc(33.333% - 20px); /* Para fazer 3 por linha */
+        }
         .box {
             background-color: #f0f0f0;
             border-radius: 10px;
-            margin: 10px;
             padding: 20px;
-            text-align: center;
-            width: 30%;
+            width: 100%;
             box-sizing: border-box;
             transition: background-color 0.3s;
         }
@@ -39,53 +42,84 @@
             text-decoration: none;
             margin-top: 10px;
         }
+        @media (max-width: 768px) {
+            .box-container {
+                width: calc(50% - 20px); /* Para fazer 2 por linha em telas menores */
+            }
+        }
+        @media (max-width: 480px) {
+            .box-container {
+                width: 100%; /* Para fazer 1 por linha em telas muito pequenas */
+            }
+        }
     </style>
 </head>
 <body>
     <header>
         <h1>Minha Página</h1>
     </header>
-<h2>Consultas</h2>
-    
     <section>
-
-        <div class="box">
-            <a href="pagina1.html">Página 1</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina1.html">Página 1</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina2.html">Página 2</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina2.html">Página 2</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina3.html">Página 3</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina3.html">Página 3</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina4.html">Página 4</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina4.html">Página 4</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina5.html">Página 5</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina5.html">Página 5</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina6.html">Página 6</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina6.html">Página 6</a>
+            </div>
         </div>
     </section>
     <section>
-        <div class="box">
-            <a href="pagina7.html">Página 7</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina7.html">Página 7</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina8.html">Página 8</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina8.html">Página 8</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina9.html">Página 9</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina9.html">Página 9</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina10.html">Página 10</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina10.html">Página 10</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina11.html">Página 11</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina11.html">Página 11</a>
+            </div>
         </div>
-        <div class="box">
-            <a href="pagina12.html">Página 12</a>
+        <div class="box-container">
+            <div class="box">
+                <a href="pagina12.html">Página 12</a>
+            </div>
         </div>
     </section>
 </body>
