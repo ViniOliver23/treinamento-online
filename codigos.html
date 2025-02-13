@@ -7,26 +7,34 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            padding: 0;
+            margin: 0;
         }
         header {
             background-color: #8B0000; /* Vermelho Escuro */
             color: white;
-            padding: 10px;
+            padding: 10px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .menu {
             cursor: pointer;
+            font-size: 24px;
         }
         .menu-items {
             display: none;
             flex-direction: column;
             background-color: #8B0000;
+            position: absolute;
+            right: 20px;
+            top: 50px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .menu-items a {
             color: white;
-            padding: 10px;
+            padding: 10px 20px;
             text-decoration: none;
         }
         .menu-items a:hover {
@@ -40,6 +48,10 @@
             padding: 10px;
             cursor: pointer;
             margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ccc;
         }
         .codigo-lista ul {
             padding: 0;
@@ -58,10 +70,38 @@
             background-color: #d3d3d3;
         }
         #lista-produtivo h2 {
-            color: green;
+            background-color: #32CD32; /* Verde */
+            color: white;
         }
         #lista-improdutivo h2 {
-            color: red;
+            background-color: #DC143C; /* Vermelho */
+            color: white;
+        }
+        form {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        form input, form select, form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        form button {
+            background-color: #8B0000;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #a52a2a;
         }
     </style>
 </head>
@@ -89,11 +129,11 @@
             <button type="submit">Adicionar Código</button>
         </form>
         <div id="lista-produtivo" class="codigo-lista">
-            <h2 onclick="toggleList('produtivo-list')">Produtivo - Códigos</h2>
+            <h2 onclick="toggleList('produtivo-list')">Produtivo - Códigos <span id="seta-produtivo">▼</span></h2>
             <ul id="produtivo-list"></ul>
         </div>
         <div id="lista-improdutivo" class="codigo-lista">
-            <h2 onclick="toggleList('improdutivo-list')">Improdutivo - Códigos</h2>
+            <h2 onclick="toggleList('improdutivo-list')">Improdutivo - Códigos <span id="seta-improdutivo">▼</span></h2>
             <ul id="improdutivo-list"></ul>
         </div>
     </div>
@@ -153,7 +193,14 @@
 
         function toggleList(listId) {
             const list = document.getElementById(listId);
-            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+            const seta = listId === 'produtivo-list' ? document.getElementById('seta-produtivo') : document.getElementById('seta-improdutivo');
+            if (list.style.display === 'none') {
+                list.style.display = 'block';
+                seta.textContent = '▼';
+            } else {
+                list.style.display = 'none';
+                seta.textContent = '▲';
+            }
         }
     </script>
 </body>
