@@ -11,7 +11,7 @@
             margin: 0;
         }
         header {
-            background-color: #8B0000; /* Vermelho Escuro */
+            background-color: #8B0000;
             color: white;
             padding: 10px 20px;
             display: flex;
@@ -55,8 +55,6 @@
         }
         .codigo-lista ul {
             padding: 0;
-            max-height: 200px;
-            overflow-y: auto;
             margin: 0;
         }
         .codigo-item {
@@ -70,11 +68,11 @@
             background-color: #d3d3d3;
         }
         #lista-produtivo h2 {
-            background-color: #32CD32; /* Verde */
+            background-color: #32CD32;
             color: white;
         }
         #lista-improdutivo h2 {
-            background-color: #DC143C; /* Vermelho */
+            background-color: #DC143C;
             color: white;
         }
         form {
@@ -103,6 +101,20 @@
         form button:hover {
             background-color: #a52a2a;
         }
+        .btn-download {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            width: 100%;
+        }
+        .btn-download:hover {
+            background-color: #005f7a;
+        }
     </style>
 </head>
 <body>
@@ -116,7 +128,7 @@
     <div class="content">
         <form id="codigo-form" onsubmit="addCodigo(event)" style="display:none;">
             <label for="codigo">Código de Baixa:</label>
-            <input type="text" id="codigo" name="codigo" required>
+            <input type="number" id="codigo" name="codigo" required>
             <label for="descricao">Descrição:</label>
             <input type="text" id="descricao" name="descricao" required>
             <label for="tipo">Tipo:</label>
@@ -128,6 +140,7 @@
             <input type="text" id="subfalha" name="subfalha">
             <button type="submit">Adicionar Código</button>
         </form>
+        <button class="btn-download" onclick="downloadJSON()">Baixar JSON</button>
         <div id="lista-produtivo" class="codigo-lista">
             <h2 onclick="toggleList('produtivo-list')">Produtivo - Códigos <span id="seta-produtivo">▼</span></h2>
             <ul id="produtivo-list"></ul>
@@ -152,14 +165,13 @@
 
         function addCodigo(event) {
             event.preventDefault();
-            const codigo = document.getElementById('codigo').value;
+            const codigo = Number(document.getElementById('codigo').value);
             const descricao = document.getElementById('descricao').value;
             const tipo = document.getElementById('tipo').value;
             const subfalha = document.getElementById('subfalha').value;
             const codigoObj = { codigo, descricao, tipo, subfalha };
 
-            let codigosBaixa = localStorage.getItem('codigosBaixa');
-            codigosBaixa = codigosBaixa ? JSON.parse(codigosBaixa) : [];
+            let codigosBaixa = JSON.parse(localStorage.getItem('codigosBaixa')) || [];
             codigosBaixa.push(codigoObj);
             localStorage.setItem('codigosBaixa', JSON.stringify(codigosBaixa));
 
@@ -172,8 +184,9 @@
         function showList() {
             const produtivoList = document.getElementById('produtivo-list');
             const improdutivoList = document.getElementById('improdutivo-list');
-            let codigosBaixa = localStorage.getItem('codigosBaixa');
-            codigosBaixa = codigosBaixa ? JSON.parse(codigosBaixa) : [];
+            let codigosBaixa = JSON.parse(localStorage.getItem('codigosBaixa')) || [];
+
+            codigosBaixa.sort((a, b) => a.codigo - b.codigo);
 
             produtivoList.innerHTML = '';
             improdutivoList.innerHTML = '';
@@ -182,25 +195,19 @@
                 const listItem = document.createElement('li');
                 listItem.className = 'codigo-item';
                 listItem.innerHTML = `#${item.codigo}: ${item.descricao} ${item.subfalha ? '(Subfalha: ' + item.subfalha + ')' : ''}`;
-                
-                if (item.tipo === 'produtivo') {
-                    produtivoList.appendChild(listItem);
-                } else {
-                    improdutivoList.appendChild(listItem);
-                }
+                (item.tipo === 'produtivo' ? produtivoList : improdutivoList).appendChild(listItem);
             });
         }
 
-        function toggleList(listId) {
-            const list = document.getElementById(listId);
-            const seta = listId === 'produtivo-list' ? document.getElementById('seta-produtivo') : document.getElementById('seta-improdutivo');
-            if (list.style.display === 'none') {
-                list.style.display = 'block';
-                seta.textContent = '▼';
-            } else {
-                list.style.display = 'none';
-                seta.textContent = '▲';
-            }
+        function downloadJSON() {
+            let codigosBaixa = localStorage.getItem('codigosBaixa');
+            const blob = new Blob([codigosBaixa], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'codigos_baixa.js';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
