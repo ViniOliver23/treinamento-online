@@ -35,6 +35,18 @@
         .content {
             padding: 20px;
         }
+        .codigo-lista h2 {
+            background-color: #f0f0f0;
+            padding: 10px;
+            cursor: pointer;
+            margin: 0;
+        }
+        .codigo-lista ul {
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 0;
+        }
         .codigo-item {
             padding: 10px;
             list-style: none;
@@ -44,6 +56,12 @@
         }
         .codigo-item:nth-child(even) {
             background-color: #d3d3d3;
+        }
+        #lista-produtivo h2 {
+            color: green;
+        }
+        #lista-improdutivo h2 {
+            color: red;
         }
     </style>
 </head>
@@ -71,11 +89,11 @@
             <button type="submit">Adicionar Código</button>
         </form>
         <div id="lista-produtivo" class="codigo-lista">
-            <h2>Produtivo</h2>
+            <h2 onclick="toggleList('produtivo-list')">Produtivo - Códigos</h2>
             <ul id="produtivo-list"></ul>
         </div>
         <div id="lista-improdutivo" class="codigo-lista">
-            <h2>Improdutivo</h2>
+            <h2 onclick="toggleList('improdutivo-list')">Improdutivo - Códigos</h2>
             <ul id="improdutivo-list"></ul>
         </div>
     </div>
@@ -131,6 +149,11 @@
                     improdutivoList.appendChild(listItem);
                 }
             });
+        }
+
+        function toggleList(listId) {
+            const list = document.getElementById(listId);
+            list.style.display = list.style.display === 'none' ? 'block' : 'none';
         }
     </script>
 </body>
