@@ -7,11 +7,12 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 0; 
+            padding: 0;
             margin: 0;
+            display: none; /* Para esconder a página antes do login */
         }
         header {
-            background-color: #8B0000; /* Vermelho Escuro */
+            background-color: #8B0000;
             color: white;
             padding: 10px 20px;
             display: flex;
@@ -48,34 +49,24 @@
             padding: 10px;
             cursor: pointer;
             margin: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             border-bottom: 1px solid #ccc;
         }
         .codigo-lista ul {
             padding: 0;
-            max-height: 200px;
-            overflow-y: auto;
             margin: 0;
         }
         .codigo-item {
             padding: 10px;
             list-style: none;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #ddd;
         }
-        .codigo-item:nth-child(odd) {
-            background-color: #f0f0f0;
-        }
-        .codigo-item:nth-child(even) {
-            background-color: #d3d3d3;
-        }
-        #lista-produtivo h2 {
-            background-color: #32CD32; /* Verde */
-            color: white;
-        }
-        #lista-improdutivo h2 {
-            background-color: #DC143C; /* Vermelho */
-            color: white;
+        .codigo-item button {
+            margin-left: 5px;
+            padding: 5px;
+            border: none;
+            cursor: pointer;
         }
         form {
             background-color: #f9f9f9;
@@ -83,36 +74,49 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        form label {
-            display: block;
-            margin-bottom: 5px;
+        #login-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
         }
-        form input, form select, form button {
-            width: 100%;
+        #login-panel input {
             padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            margin: 5px;
+            width: 200px;
         }
-        form button {
+        #login-panel button {
+            padding: 10px;
+            width: 100px;
             background-color: #8B0000;
             color: white;
             border: none;
             cursor: pointer;
         }
-        form button:hover {
-            background-color: #a52a2a;
-        }
     </style>
 </head>
 <body>
+
+    <!-- Painel de Login -->
+    <div id="login-panel">
+        <h2>Login</h2>
+        <input type="text" id="username" placeholder="Nome">
+        <input type="password" id="password" placeholder="Senha">
+        <button onclick="login()">Entrar</button>
+    </div>
+
     <header>
         <h1>Códigos de Baixa</h1>
         <div class="menu" onclick="toggleMenu()">☰</div>
         <div class="menu-items" id="menu-items">
             <a href="#" onclick="showForm()">Adicionar Código</a>
+            <a href="#" onclick="downloadData()">Baixar JSON</a>
+            <input type="file" id="jsonFile" onchange="uploadData()">
         </div>
     </header>
+
     <div class="content">
         <form id="codigo-form" onsubmit="addCodigo(event)" style="display:none;">
             <label for="codigo">Código de Baixa:</label>
@@ -124,22 +128,32 @@
                 <option value="produtivo">Produtivo</option>
                 <option value="improdutivo">Improdutivo</option>
             </select>
-            <label for="subfalha">Subfalha (Opcional):</label>
-            <input type="text" id="subfalha" name="subfalha">
             <button type="submit">Adicionar Código</button>
         </form>
+
         <div id="lista-produtivo" class="codigo-lista">
-            <h2 onclick="toggleList('produtivo-list')">Produtivo - Códigos <span id="seta-produtivo">▼</span></h2>
+            <h2>Produtivo - Códigos</h2>
             <ul id="produtivo-list"></ul>
         </div>
+
         <div id="lista-improdutivo" class="codigo-lista">
-            <h2 onclick="toggleList('improdutivo-list')">Improdutivo - Códigos <span id="seta-improdutivo">▼</span></h2>
+            <h2>Improdutivo - Códigos</h2>
             <ul id="improdutivo-list"></ul>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', showList);
+        function login() {
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (password === "Clarovirtua") {
+                document.getElementById("login-panel").style.display = "none";
+                document.body.style.display = "block";
+            } else {
+                alert("Senha incorreta!");
+            }
+        }
 
         function toggleMenu() {
             const menuItems = document.getElementById('menu-items');
@@ -155,33 +169,28 @@
             const codigo = document.getElementById('codigo').value;
             const descricao = document.getElementById('descricao').value;
             const tipo = document.getElementById('tipo').value;
-            const subfalha = document.getElementById('subfalha').value;
-            const codigoObj = { codigo, descricao, tipo, subfalha };
 
-            let codigosBaixa = localStorage.getItem('codigosBaixa');
-            codigosBaixa = codigosBaixa ? JSON.parse(codigosBaixa) : [];
-            codigosBaixa.push(codigoObj);
+            let codigosBaixa = JSON.parse(localStorage.getItem('codigosBaixa')) || [];
+            codigosBaixa.push({ codigo, descricao, tipo });
             localStorage.setItem('codigosBaixa', JSON.stringify(codigosBaixa));
 
-            document.getElementById('codigo').value = '';
-            document.getElementById('descricao').value = '';
-            document.getElementById('subfalha').value = '';
             showList();
         }
 
         function showList() {
             const produtivoList = document.getElementById('produtivo-list');
             const improdutivoList = document.getElementById('improdutivo-list');
-            let codigosBaixa = localStorage.getItem('codigosBaixa');
-            codigosBaixa = codigosBaixa ? JSON.parse(codigosBaixa) : [];
+            let codigosBaixa = JSON.parse(localStorage.getItem('codigosBaixa')) || [];
 
             produtivoList.innerHTML = '';
             improdutivoList.innerHTML = '';
 
-            codigosBaixa.forEach(item => {
+            codigosBaixa.forEach((item, index) => {
                 const listItem = document.createElement('li');
                 listItem.className = 'codigo-item';
-                listItem.innerHTML = `#${item.codigo}: ${item.descricao} ${item.subfalha ? '(Subfalha: ' + item.subfalha + ')' : ''}`;
+                listItem.innerHTML = `#${item.codigo}: ${item.descricao} 
+                    <button onclick="editCodigo(${index})">✏️</button>
+                    <button onclick="deleteCodigo(${index})">🗑️</button>`;
                 
                 if (item.tipo === 'produtivo') {
                     produtivoList.appendChild(listItem);
@@ -191,17 +200,22 @@
             });
         }
 
-        function toggleList(listId) {
-            const list = document.getElementById(listId);
-            const seta = listId === 'produtivo-list' ? document.getElementById('seta-produtivo') : document.getElementById('seta-improdutivo');
-            if (list.style.display === 'none') {
-                list.style.display = 'block';
-                seta.textContent = '▼';
-            } else {
-                list.style.display = 'none';
-                seta.textContent = '▲';
-            }
+        function deleteCodigo(index) {
+            let codigosBaixa = JSON.parse(localStorage.getItem('codigosBaixa'));
+            codigosBaixa.splice(index, 1);
+            localStorage.setItem('codigosBaixa', JSON.stringify(codigosBaixa));
+            showList();
+        }
+
+        function downloadData() {
+            const data = localStorage.getItem('codigosBaixa');
+            const blob = new Blob([data], { type: "application/json" });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = "codigos_baixa.json";
+            a.click();
         }
     </script>
+
 </body>
 </html>
