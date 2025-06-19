@@ -1,22 +1,69 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Visualizador de PDF</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Galeria de Fotos</title>
   <style>
-    html, body {
+    * {
       margin: 0;
       padding: 0;
-      height: 100%;
+      box-sizing: border-box;
     }
-    iframe {
-      border: none;
+    html, body {
       width: 100%;
       height: 100%;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .contador {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      background: rgba(0,0,0,0.5);
+      padding: 4px 8px;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
-  <iframe src="https://vere-feitosa.web.app/aiwa.pdf" allowfullscreen></iframe>
+  <div class="contador" id="contador">Imagem 0 de 20</div>
+  <img id="foto" src="" alt="Foto" />
+  
+  <script>
+    const baseUrl = 'https://vinioliver23.github.io/treinamento-online/aiwa/';
+    let index = 0;
+    const max = 20;
+    const img = document.getElementById('foto');
+    const contador = document.getElementById('contador');
+
+    function mostrarImagem() {
+      const num = String(index).padStart(4, '0');
+      img.src = `${baseUrl}11_20250618_214213_${num}.png`;
+      contador.textContent = `Imagem ${index} de ${max}`;
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' && index < max) {
+        index++;
+        mostrarImagem();
+      } else if (e.key === 'ArrowLeft' && index > 0) {
+        index--;
+        mostrarImagem();
+      }
+    });
+
+    mostrarImagem(); // exibe a primeira imagem ao carregar
+  </script>
 </body>
 </html>
