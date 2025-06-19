@@ -3,37 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Visualizador</title>
+  <title>Visualizador Completo</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      background-color: black;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      padding: 10px;
+      background-color: #000;
+      color: white;
+      font-family: sans-serif;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
     }
     img {
+      display: block;
       max-width: 100%;
-      max-height: 100%;
+      margin: 20px auto;
+      border: 2px solid #333;
     }
-    .info {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(0,0,0,0.6);
-      color: white;
-      padding: 5px 10px;
-      border-radius: 5px;
+    .titulo-imagem {
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: -10px;
+      color: #aaa;
       font-size: 14px;
-      font-family: sans-serif;
     }
   </style>
 </head>
 <body>
-  <div class="info" id="info">Carregando...</div>
-  <img id="img" src="" alt="Imagem" />
+  <h2>Visualizador de 21 Imagens</h2>
+
   <script>
     var imagens = [
       "1_20250618_214213_0000.png",
@@ -48,30 +48,31 @@
       "17_20250618_214214_0017.png",
       "18_20250618_214214_0018.png",
       "19_20250618_214214_0019.png",
-      "20_20250618_214214_0020.png"
+      "20_20250618_214214_0020.png",
+      "3_20250618_214213_0002.png",
+      "4_20250618_214213_0003.png",
+      "5_20250618_214213_0004.png",
+      "6_20250618_214213_0005.png",
+      "7_20250618_214213_0006.png",
+      "8_20250618_214213_0007.png",
+      "9_20250618_214213_0008.png",
+      "10_20250618_214213_0009.png"
     ];
 
     var baseUrl = "https://vinioliver23.github.io/treinamento-online/aiwa/";
-    var atual = 0;
-    var img = document.getElementById("img");
-    var info = document.getElementById("info");
 
-    function mostrarImagem() {
-      img.src = baseUrl + imagens[atual];
-      info.textContent = "Imagem " + (atual + 1) + " de " + imagens.length;
-    }
+    imagens.forEach(function(nome, index) {
+      var titulo = document.createElement("div");
+      titulo.className = "titulo-imagem";
+      titulo.textContent = "Imagem " + (index + 1);
 
-    document.addEventListener("keydown", function(e) {
-      if (e.keyCode === 39 && atual < imagens.length - 1) { // seta direita
-        atual++;
-        mostrarImagem();
-      } else if (e.keyCode === 37 && atual > 0) { // seta esquerda
-        atual--;
-        mostrarImagem();
-      }
+      var img = document.createElement("img");
+      img.src = baseUrl + nome;
+      img.alt = "Imagem " + (index + 1);
+
+      document.body.appendChild(titulo);
+      document.body.appendChild(img);
     });
-
-    mostrarImagem();
   </script>
 </body>
 </html>
