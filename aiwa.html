@@ -1,69 +1,81 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Galeria de Fotos</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visualizador de Imagens</title>
   <style>
-    * {
+    body, html {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
+      background: black;
       width: 100%;
       height: 100%;
-      background-color: #000;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
+      overflow: hidden;
     }
     img {
       max-width: 100%;
       max-height: 100%;
       object-fit: contain;
     }
-    .contador {
+    .info {
       position: absolute;
       top: 10px;
       left: 10px;
+      background: rgba(0,0,0,0.6);
       color: white;
-      font-family: Arial, sans-serif;
-      font-size: 18px;
-      background: rgba(0,0,0,0.5);
-      padding: 4px 8px;
-      border-radius: 6px;
+      padding: 6px 10px;
+      border-radius: 5px;
+      font-family: sans-serif;
     }
   </style>
 </head>
 <body>
-  <div class="contador" id="contador">Imagem 0 de 20</div>
-  <img id="foto" src="" alt="Foto" />
-  
+  <div class="info" id="info">Imagem 1 de X</div>
+  <img id="img" src="" alt="Imagem" />
+
   <script>
-    const baseUrl = 'https://vinioliver23.github.io/treinamento-online/aiwa/';
-    let index = 0;
-    const max = 20;
-    const img = document.getElementById('foto');
-    const contador = document.getElementById('contador');
+    const imagens = [
+      "1_20250618_214213_0000.png",
+      "2_20250618_214213_0001.png",
+      "11_20250618_214213_0010.png",
+      "12_20250618_214214_0011.png",
+      "13_20250618_214214_0012.png",
+      "21_20250618_214214_0013.png",
+      "14_20250618_214214_0014.png",
+      "15_20250618_214214_0015.png",
+      "16_20250618_214214_0016.png",
+      "17_20250618_214214_0017.png",
+      "18_20250618_214214_0018.png",
+      "19_20250618_214214_0019.png",
+      "20_20250618_214214_0020.png"
+    ];
+
+    const baseUrl = "https://vinioliver23.github.io/treinamento-online/aiwa/";
+    let atual = 0;
+
+    const img = document.getElementById("img");
+    const info = document.getElementById("info");
 
     function mostrarImagem() {
-      const num = String(index).padStart(4, '0');
-      img.src = `${baseUrl}11_20250618_214213_${num}.png`;
-      contador.textContent = `Imagem ${index} de ${max}`;
+      img.src = baseUrl + imagens[atual];
+      info.textContent = `Imagem ${atual + 1} de ${imagens.length}`;
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' && index < max) {
-        index++;
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowRight" && atual < imagens.length - 1) {
+        atual++;
         mostrarImagem();
-      } else if (e.key === 'ArrowLeft' && index > 0) {
-        index--;
+      } else if (e.key === "ArrowLeft" && atual > 0) {
+        atual--;
         mostrarImagem();
       }
     });
 
-    mostrarImagem(); // exibe a primeira imagem ao carregar
+    mostrarImagem();
   </script>
 </body>
 </html>
