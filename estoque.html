@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estoque Pro Ultra - V7</title>
+<script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
+
+<style>
+  :root {
+    --primary: #2196F3;
+    --dark: #0f172a;
+    --danger: #ef4444;
+    --success: #10b981;
+    --gray-light: #f8fafc;
+    --tag-bg: #e2e8f0;
+  }
+
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--gray-light); margin: 0; padding-bottom: 80px; color: #334155; }
+
+  header {
+    background: var(--dark); color: white; padding: 15px;
+    display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  .sidebar {
+    position: fixed; left: -280px; top: 0; width: 280px; height: 100%;
+    background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+    z-index: 200; transition: 0.3s; padding-top: 20px;
+  }
+  .sidebar.active { left: 0; }
+  .sidebar a { display: block; padding: 18px 25px; color: var(--dark); text-decoration: none; font-weight: 600; border-bottom: 1px solid #f1f5f9; }
+  .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 150; }
+
+  .page { display: none; padding: 15px; max-width: 600px; margin: auto; animation: fadeIn 0.2s; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .section-title { font-size: 0.75rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin: 25px 0 10px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px; }
+
+  /* DASHBOARD */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+  .stat-card { background: white; border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.1s; }
+  .stat-card:active { transform: scale(0.95); background: #f1f5f9; }
+
+  .progress-circle {
+    width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative;
+    background: conic-gradient(var(--color) calc(var(--percent) * 1%), #e2e8f0 0);
+  }
+  .progress-circle::after { content: ""; position: absolute; width: 34px; height: 34px; background: white; border-radius: 50%; }
+  .stat-info { z-index: 1; }
+  .stat-info small { font-size: 0.6rem; color: #94a3b8; display: block; text-transform: uppercase; }
+  .stat-info span { font-size: 0.9rem; font-weight: 800; }
+
+  /* CARDS */
+  .card { background: white; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 6px solid #cbd5e1; position: relative; }
+  .card.zerado { border-left-color: #334155; }
+  .card.critico { border-left-color: var(--danger); }
+  .card.alerta { border-left-color: #f59e0b; }
+
+  .btn-editar-link { position: absolute; top: 16px; right: 16px; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; border: none; color: var(--primary); font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.7rem; }
+
+  .tag { display: inline-block; background: var(--tag-bg); color: #475569; font-size: 0.65rem; padding: 2px 8px; border-radius: 4px; margin-top: 5px; font-weight: bold; text-transform: uppercase; }
+
+  /* QUICK ADJUSTER */
+  .quick-qty { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e2e8f0; }
+  .quick-qty input { width: 60px; text-align: center; padding: 5px; height: 35px; }
+  .btn-mini { width: 35px; height: 35px; border-radius: 6px; border: 1px solid #cbd5e1; background: white; font-weight: bold; cursor: pointer; }
+
+  /* CAMERA */
+  .scanner-box { width: 100%; height: 200px; background: #000; border-radius: 12px; margin-bottom: 15px; overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center; border: 2px solid var(--dark); }
+  #interactive.viewport { width: 100%; height: 100%; }
+
+  /* FORMS */
+  .form-group { margin-bottom: 12px; }
+  .form-group label { display: block; font-size: 0.65rem; font-weight: bold; color: var(--primary); text-transform: uppercase; margin-bottom: 4px; }
+  input, select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; font-size: 0.95rem; }
+
+  .qty-selector { display: flex; align-items: center; gap: 10px; margin-top: 5px; }
+  .btn-qty { width: 40px; height: 40px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; font-size: 1.2rem; font-weight: bold; cursor: pointer; }
+  
+  .btn { padding: 14px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; }
+  .btn-success { background: var(--success); color: white; }
+  .btn-dark { background: var(--dark); color: white; }
+  .btn-del { background: none; color: var(--danger); text-decoration: underline; margin-top: 10px; border: none; cursor: pointer; width: 100%; font-size: 0.8rem; }
+  
+  .edit-area { display: none; margin-top: 15px; padding-top: 15px; border-top: 1px solid #f1f5f9; }
+</style>
+</head>
+<body>
+
+<header>
+  <div onclick="toggleMenu()" style="cursor:pointer; font-size: 24px;">â˜°</div>
+  <div id="page-title" style="font-weight: bold;">DASHBOARD</div>
+  <div style="width: 24px;"></div>
+</header>
+
+<div class="overlay" onclick="toggleMenu()" id="overlay"></div>
+
+<nav class="sidebar" id="sidebar">
+  <a href="#" onclick="nav('home', 'Dashboard')">ðŸ  Home / SaÃºde</a>
+  <a href="#" onclick="nav('inventory', 'Lista Geral')">ðŸ“¦ Todo o Estoque</a>
+<a href="#" onclick="nav('shopping', 'Editar Propriedades')">âš™ï¸ Editar Propriedades</a>
+  <a href="#" onclick="nav('add-page', 'Novo Produto')">âž• Cadastrar Novo</a>
+  <a href="#" onclick="exportar()">ðŸ’¾ Exportar Backup</a>
+</nav>
+
+<div id="home" class="page active">
+  <div class="section-title">ðŸ“Š SaÃºde (Clique p/ Filtrar)</div>
+  <div class="stats-grid" id="stats-container"></div>
+  <div class="section-title">ðŸ›’ Precisa Comprar</div>
+  <div id="list-compras"></div>
+</div>
+
+<div id="shopping" class="page">
+  <div class="section-title">Editar Detalhes dos Itens</div>
+  <input type="text" id="search-shopping" placeholder="ðŸ” Buscar item para editar..." onkeyup="renderShopping()" style="margin-bottom: 15px;">
+  <div id="list-shopping"></div>
+</div>
+
+<div id="inventory" class="page">
+  <div class="section-title">Filtro por Categoria</div>
+  <select id="filtro-categoria" onchange="render()" style="margin-bottom: 15px;">
+    <option value="Todos">Todas as Categorias</option>
+    <option>Alimentos em Geral</option><option>Higiene Pessoal</option><option>Limpeza da Casa</option><option>Hortifruti</option><option>Mistura</option>
+  </select>
+  <div id="list-geral"></div>
+</div>
+
+<div id="add-page" class="page">
+  <div class="section-title">Novo Cadastro</div>
+  <div class="scanner-box">
+    <div id="interactive" class="viewport"></div>
+    <div style="position:absolute; color:white; text-align:center; z-index: 5;" id="scan-msg">â•‘â–Œâ•‘â–ˆâ•‘â–Œ<br><small>Toque em Escanear</small></div>
+  </div>
+  <button class="btn btn-dark" style="margin-bottom: 20px;" onclick="iniciarScan()">ðŸ“¸ ESCANEAR EAN</button>
+
+  <div class="form-group"><label>Nome</label><input id="add-nome"></div>
+  <div class="form-group"><label>Marca</label><input id="add-marca"></div>
+  <div class="form-group"><label>Categoria</label>
+    <select id="add-tag">
+      <option>Alimentos em Geral</option><option>Higiene Pessoal</option><option>Limpeza da Casa</option><option>Hortifruti</option><option>Mistura</option>
+    </select>
+  </div>
+  <div style="display:flex; gap:10px">
+    <div class="form-group" style="flex:1"><label>Qtd Atual</label><input id="add-qtd" type="number" value="0"></div>
+    <div class="form-group" style="flex:1"><label>Qtd Ideal</label><input id="add-ideal" type="number" value="1"></div>
+  </div>
+  <div style="display:flex; gap:10px">
+    <div class="form-group" style="flex:1"><label>EAN</label><input id="add-ean"></div>
+    <div class="form-group" style="flex:1"><label>DuraÃ§Ã£o (Dias)</label><input id="add-dias" type="number" value="0"></div>
+  </div>
+  <button class="btn btn-success" onclick="salvarNovo()">ADICIONAR ITEM</button>
+</div>
+
+<script>
+let estoque = JSON.parse(localStorage.getItem("estoquePro")) || [];
+const categorias = ["Alimentos em Geral", "Higiene Pessoal", "Limpeza da Casa", "Hortifruti", "Mistura"];
+
+function toggleMenu() {
+  document.getElementById('sidebar').classList.toggle('active');
+  const ov = document.getElementById('overlay');
+  ov.style.display = ov.style.display === 'block' ? 'none' : 'block';
+}
+
+function nav(pageId, title, filterValue = "Todos") {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.getElementById('page-title').innerText = title.toUpperCase();
+  if(document.getElementById('sidebar').classList.contains('active')) toggleMenu();
+  
+  if(pageId === 'inventory' && filterValue !== "Todos") {
+    document.getElementById('filtro-categoria').value = filterValue;
+  }
+  
+  if(pageId === 'shopping') renderShopping();
+  else render();
+}
+
+function updateQtd(idx, delta) {
+    let input = document.getElementById(`quick-input-${idx}`);
+    if(!input) return;
+    let novaQtd = Math.max(0, (parseInt(estoque[idx].qtd) || 0) + delta);
+    estoque[idx].qtd = novaQtd;
+    localStorage.setItem("estoquePro", JSON.stringify(estoque));
+    render();
+}
+
+function typeQtd(idx, val) {
+    estoque[idx].qtd = Math.max(0, parseInt(val) || 0);
+    localStorage.setItem("estoquePro", JSON.stringify(estoque));
+    // NÃ£o renderiza aqui para nÃ£o perder o foco do input enquanto digita
+}
+
+function render() {
+  const cDiv = document.getElementById('list-compras');
+  const gDiv = document.getElementById('list-geral');
+  const sDiv = document.getElementById('stats-container');
+  const filtro = document.getElementById('filtro-categoria').value;
+  
+  cDiv.innerHTML = ""; gDiv.innerHTML = ""; sDiv.innerHTML = "";
+
+  categorias.forEach(cat => {
+    const itensCat = estoque.filter(i => i.tag === cat);
+    if(itensCat.length === 0) return;
+    let at = 0, id = 0;
+    itensCat.forEach(i => { at += parseFloat(i.qtd || 0); id += parseFloat(i.ideal || 1); });
+    const porc = Math.min(100, Math.round((at / id) * 100));
+    const cor = porc > 70 ? '#10b981' : porc > 30 ? '#f59e0b' : '#ef4444';
+    if(document.getElementById('home').classList.contains('active')) {
+        sDiv.innerHTML += `
+        <div class="stat-card" onclick="nav('inventory', 'Lista Geral', '${cat}')">
+            <div class="progress-circle" style="--percent:${porc}; --color:${cor}"></div>
+            <div class="stat-info"><small>${cat.split(' ')[0]}</small><span>${porc}%</span></div>
+        </div>`;
+    }
+  });
+
+  estoque.forEach((item, index) => {
+    const at = parseFloat(item.qtd) || 0;
+    const id = parseFloat(item.ideal) || 1;
+    const porc = (at / id) * 100;
+    const statusClass = at <= 0 ? 'zerado' : porc <= 30 ? 'critico' : porc <= 70 ? 'alerta' : '';
+
+    if(!document.getElementById('home').classList.contains('active') && filtro !== "Todos" && item.tag !== filtro) return;
+
+    const cardHtml = `
+      <div class="card ${statusClass}">
+        <div class="info">
+          <b>${item.nome}</b> <small>${item.marca || ''}</small>
+          <div class="tag">${item.tag}</div>
+          <div style="font-size:0.75rem; margin-top:5px; color:#64748b">Ideal: ${item.ideal} | DuraÃ§Ã£o: ${item.dias} dias</div>
+        </div>
+        <div class="quick-qty">
+            <button class="btn-mini" onclick="updateQtd(${index}, -1)">-</button>
+            <input id="quick-input-${index}" type="number" value="${item.qtd}" onchange="typeQtd(${index}, this.value)" onblur="render()">
+            <button class="btn-mini" onclick="updateQtd(${index}, 1)">+</button>
+            <small style="margin-left:auto; color:#94a3b8; font-weight:bold">${Math.round(porc)}%</small>
+        </div>
+      </div>
+    `;
+
+    if(document.getElementById('home').classList.contains('active')) {
+      if(porc <= 70) cDiv.insertAdjacentHTML('beforeend', cardHtml);
+    } else {
+      gDiv.insertAdjacentHTML('beforeend', cardHtml);
+    }
+  });
+}
+
+function renderShopping() {
+    const list = document.getElementById('list-shopping');
+    const search = document.getElementById('search-shopping').value.toLowerCase();
+    list.innerHTML = "";
+    
+    estoque.forEach((item, index) => {
+        if(search && !item.nome.toLowerCase().includes(search)) return;
+        
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <button class="btn-editar-link" onclick="toggleEdit(${index})">editar</button>
+            <b>${item.nome}</b> <small>(${item.marca})</small>
+            <div style="font-size:0.75rem; color: #64748b">EAN: ${item.ean || 'N/A'} | Tag: ${item.tag}</div>
+            
+            <div class="edit-area" id="edit-${index}">
+                <div class="form-group"><label>Nome do Produto</label><input id="en-${index}" value="${item.nome}"></div>
+                <div class="form-group"><label>Marca</label><input id="emarc-${index}" value="${item.marca || ''}"></div>
+                <div class="form-group"><label>Categoria</label>
+                    <select id="etag-${index}">
+                        ${categorias.map(c => `<option ${item.tag === c ? 'selected' : ''}>${c}</option>`).join('')}
+                    </select>
+                </div>
+                <div style="display:flex; gap:10px">
+                    <div class="form-group" style="flex:1"><label>Estoque Atual</label>
+                        <input id="eq-${index}" type="number" value="${item.qtd}">
+                    </div>
+                    <div class="form-group" style="flex:1"><label>Qtd Ideal</label><input id="ei-${index}" type="number" value="${item.ideal || 1}"></div>
+                </div>
+                <div style="display:flex; gap:10px">
+                    <div class="form-group" style="flex:1"><label>EAN</label><input id="eean-${index}" value="${item.ean || ''}"></div>
+                    <div class="form-group" style="flex:1"><label>DuraÃ§Ã£o (Dias)</label><input id="ed-${index}" type="number" value="${item.dias}"></div>
+                </div>
+                <button class="btn btn-success" onclick="salvarEdit(${index})">SALVAR ALTERAÃ‡Ã•ES</button>
+                <button class="btn-del" onclick="remover(${index})">EXCLUIR PRODUTO</button>
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+function toggleEdit(idx) {
+  const el = document.getElementById(`edit-${idx}`);
+  el.style.display = el.style.display === "block" ? "none" : "block";
+}
+
+function salvarEdit(idx) {
+  estoque[idx].nome = document.getElementById(`en-${idx}`).value;
+  estoque[idx].marca = document.getElementById(`emarc-${idx}`).value;
+  estoque[idx].tag = document.getElementById(`etag-${idx}`).value;
+  estoque[idx].qtd = document.getElementById(`eq-${idx}`).value;
+  estoque[idx].ideal = document.getElementById(`ei-${idx}`).value;
+  estoque[idx].ean = document.getElementById(`eean-${idx}`).value;
+  estoque[idx].dias = parseInt(document.getElementById(`ed-${idx}`).value) || 0;
+  
+  localStorage.setItem("estoquePro", JSON.stringify(estoque));
+  alert("AlteraÃ§Ãµes salvas!");
+  renderShopping();
+}
+
+function salvarNovo() {
+  const nome = document.getElementById('add-nome').value;
+  if(!nome) return alert("Nome Ã© obrigatÃ³rio!");
+  estoque.push({
+    nome, tag: document.getElementById('add-tag').value,
+    marca: document.getElementById('add-marca').value,
+    qtd: document.getElementById('add-qtd').value,
+    ideal: document.getElementById('add-ideal').value,
+    dias: parseInt(document.getElementById('add-dias').value) || 0,
+    ean: document.getElementById('add-ean').value
+  });
+  localStorage.setItem("estoquePro", JSON.stringify(estoque));
+  nav('inventory', 'Lista Geral');
+}
+
+function iniciarScan() {
+  document.getElementById('scan-msg').style.display = "none";
+  Quagga.init({
+    inputStream: { name: "Live", type: "LiveStream", target: document.querySelector('#interactive'), constraints: { facingMode: "environment" } },
+    decoder: { readers: ["ean_reader", "ean_8_reader"] },
+    locate: true
+  }, (err) => { if(!err) Quagga.start(); });
+
+  Quagga.onDetected((data) => {
+    document.getElementById('add-ean').value = data.codeResult.code;
+    Quagga.stop();
+    document.getElementById('scan-msg').style.display = "block";
+    document.getElementById('scan-msg').innerHTML = "LIDO!";
+  });
+}
+
+function remover(idx) {
+  if(confirm("Deseja realmente excluir este item?")) { 
+    estoque.splice(idx, 1); 
+    localStorage.setItem("estoquePro", JSON.stringify(estoque)); 
+    renderShopping(); 
+  }
+}
+
+function exportar() {
+  const blob = new Blob([JSON.stringify(estoque)], {type: 'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
+  a.download = 'estoque_backup.json'; a.click();
+}
+
+render();
+</script>
+</body>
+</html>
+
