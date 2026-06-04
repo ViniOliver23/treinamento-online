@@ -1,0 +1,749 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NuControl Pro - Claro & Danlex</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+        }
+        .bg-nu-purple { background-color: #820ad1; }
+        .text-nu-purple { color: #820ad1; }
+        .border-nu-purple { border-color: #820ad1; }
+        .hover-nu-purple:hover { background-color: #6d08b3; }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .switch-checkbox:checked + .switch-label { background-color: #820ad1; }
+        .switch-checkbox:checked + .switch-label .switch-dot { transform: translateX(100%); }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen pb-24 selection:bg-purple-900">
+
+    <div class="bg-nu-purple text-white px-4 pt-3 pb-1 flex justify-between items-center text-xs font-semibold">
+        <span id="clock-display">00:15</span>
+        <div class="flex items-center gap-1.5">
+            <i data-lucide="signal" class="w-3.5 h-3.5"></i>
+            <span class="text-[10px]">4G</span>
+            <i data-lucide="battery" class="w-4 h-4"></i>
+        </div>
+    </div>
+
+    <header class="bg-nu-purple px-4 pt-2 pb-6 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <button onclick="toggleMenu()" class="w-12 h-12 bg-white/15 hover:bg-white/25 rounded-full flex items-center justify-center transition">
+                <i data-lucide="user" class="w-5 h-5 text-white"></i>
+            </button>
+            <div class="flex flex-col">
+                <span id="profile-name-display" class="text-lg font-bold text-white tracking-wide">Olá, Técnico Claro</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button onclick="exportData()" class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition" title="Exportar Backup JSON">
+                <i data-lucide="download" class="w-4 h-4"></i>
+            </button>
+            <label class="w-10 h-10 bg-white/15 hover:bg-white/25 text-white rounded-full flex items-center justify-center transition cursor-pointer" title="Importar Backup JSON">
+                <i data-lucide="upload" class="w-4 h-4"></i>
+                <input type="file" id="import-file" class="hidden" accept=".json" onchange="importData(event)">
+            </label>
+        </div>
+    </header>
+
+    <div id="sidebar" class="fixed inset-y-0 left-0 w-80 bg-[#11121a] border-r border-[#242736] z-50 transform -translate-x-full transition-transform duration-300 ease-in-out shadow-2xl p-6 flex flex-col justify-between">
+        <div class="space-y-6 overflow-y-auto no-scrollbar max-h-[calc(100vh-100px)]">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2 text-white font-bold text-lg">
+                    <span class="text-nu-purple font-black text-xl">nu</span>control
+                </div>
+                <button onclick="toggleMenu()" class="p-1 hover:bg-slate-800 rounded-full text-slate-400">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="bg-[#1c1e29] p-4 rounded-2xl border border-[#242736]">
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+                    <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Identificação do Técnico
+                </h3>
+                <input type="text" id="tech-name-input" class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-nu-purple mb-3">
+                <button onclick="saveProfile()" class="w-full bg-nu-purple hover:hover-nu-purple text-white text-xs font-bold py-2.5 rounded-full transition">
+                    Atualizar Perfil
+                </button>
+            </div>
+
+            <div class="bg-[#1c1e29] p-4 rounded-2xl border border-[#242736] space-y-2">
+                <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-1">
+                    <i data-lucide="link" class="w-3.5 h-3.5"></i> Links Úteis / Formulários
+                </h3>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLSdCEiPKXiguftx922AOX-1OM08MhNS_aQABbItseV6hhCk2eQ/viewform" target="_blank" class="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#0c0d12] hover:bg-slate-800 text-xs text-slate-200 transition">
+                    <i data-lucide="file-text" class="w-4 h-4 text-nu-purple"></i> Indentificar NAP
+                </a>
+                <a href="https://docs.google.com/forms/d/e/1FAIpQLScNsNCVYqW9q81STnbtlpbtBTLfZ4PGoOM6OzwKF_Ai-6s3mA/viewform?pli=1" target="_blank" class="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#0c0d12] hover:bg-slate-800 text-xs text-slate-200 transition">
+                    <i data-lucide="check-square" class="w-4 h-4 text-nu-purple"></i> Solicitar Combustível
+                </a>
+                <a href="http://179.223.62.2:8181/escalaonline/admin/index.php" target="_blank" class="flex items-center gap-2.5 p-2.5 rounded-xl bg-[#0c0d12] hover:bg-slate-800 text-xs text-slate-200 transition">
+                    <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i> Escala Data Center 
+                </a>
+            </div>
+        </div>
+        
+        <div class="border-t border-[#242736] pt-4 text-[11px] text-slate-500 font-mono space-y-1">
+            <p id="menu-date-in">Início dos Registros: --/--/--</p>
+            <p id="menu-date-act">Última Atualização: --/--/--</p>
+            <p class="text-[9px] text-slate-600 mt-2">Cal Bank Engine v4.2.3</p>
+        </div>
+    </div>
+
+    <main class="max-w-md mx-auto px-4 mt-4 space-y-4">
+
+        <div onclick="openModalView('stock')" class="bg-black p-4 rounded-xl flex flex-col justify-between cursor-pointer group transition active:scale-95">
+            <div class="flex justify-between items-center text-white mb-1">
+                <span class="text-base font-semibold">Conta</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <div class="text-2xl font-bold text-white tracking-tight" id="stock-count-main">0 Equipamentos</div>
+            <span class="text-xs text-slate-400 mt-1">Disponíveis no carro (Estoque)</span>
+        </div>
+
+        <div class="flex gap-4 overflow-x-auto no-scrollbar py-2 px-1">
+            <div class="flex flex-col items-center text-center min-w-[76px] gap-2">
+                <div class="w-14 h-14 bg-[#1c1e29] rounded-full flex items-center justify-center text-white relative">
+                    <i data-lucide="router" class="w-6 h-6"></i>
+                    <span id="badge-dual" class="absolute -top-1 -right-1 bg-nu-purple text-[10px] px-1.5 py-0.5 font-bold rounded-full">0</span>
+                </div>
+                <span class="text-[11px] text-slate-300 font-medium">Dual Band</span>
+            </div>
+            <div class="flex flex-col items-center text-center min-w-[76px] gap-2">
+                <div class="w-14 h-14 bg-[#1c1e29] rounded-full flex items-center justify-center text-white relative">
+                    <i data-lucide="tv" class="w-6 h-6"></i>
+                    <span id="badge-decoder" class="absolute -top-1 -right-1 bg-nu-purple text-[10px] px-1.5 py-0.5 font-bold rounded-full">0</span>
+                </div>
+                <span class="text-[11px] text-slate-300 font-medium">Decoders</span>
+            </div>
+            <div class="flex flex-col items-center text-center min-w-[76px] gap-2">
+                <div class="w-14 h-14 bg-[#1c1e29] rounded-full flex items-center justify-center text-white relative">
+                    <i data-lucide="zap" class="w-6 h-6"></i>
+                    <span id="badge-ont350" class="absolute -top-1 -right-1 bg-nu-purple text-[10px] px-1.5 py-0.5 font-bold rounded-full">0</span>
+                </div>
+                <span class="text-[11px] text-slate-300 font-medium">ONT 350M</span>
+            </div>
+            <div class="flex flex-col items-center text-center min-w-[76px] gap-2">
+                <div class="w-14 h-14 bg-[#1c1e29] rounded-full flex items-center justify-center text-white relative">
+                    <i data-lucide="layers" class="w-6 h-6"></i>
+                    <span id="badge-ontgiga" class="absolute -top-1 -right-1 bg-nu-purple text-[10px] px-1.5 py-0.5 font-bold rounded-full">0</span>
+                </div>
+                <span class="text-[11px] text-slate-300 font-medium">ONT'S</span>
+            </div>
+        </div>
+
+        <button onclick="openModalView('stock')" class="w-full bg-[#1c1e29] hover:bg-[#242736] transition py-4 px-4 rounded-xl flex items-center gap-3 text-white text-left">
+            <i data-lucide="credit-card" class="w-5 h-5 text-slate-300"></i>
+            <span class="text-sm font-semibold text-slate-200">Meus Equipamentos em Estoque</span>
+        </button>
+
+        <div onclick="openModalView('atendimentos')" class="border-t border-[#1c1e29] pt-4 flex flex-col cursor-pointer group transition active:scale-95">
+            <div class="flex justify-between items-center text-white mb-1">
+                <span class="text-base font-semibold">Meus Atendimentos</span>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-slate-400"></i>
+            </div>
+            <div class="text-xs text-slate-400 font-medium">Última ativação realizada em cliente:</div>
+            <div class="text-lg font-bold text-emerald-400 mt-1" id="last-client-display">Nenhum cliente recente</div>
+            <div class="text-[11px] text-slate-500 mt-1" id="last-contract-display">Clique para abrir o extrato de ordens de serviço</div>
+        </div>
+
+        <section class="bg-[#11121a] border border-[#1c1e29] p-4 rounded-xl space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                <i data-lucide="plus-circle" class="text-nu-purple w-4 h-4"></i> Registrar Movimentação
+            </h3>
+
+            <div id="scanner-container" class="hidden bg-black rounded-xl overflow-hidden p-1 border border-nu-purple">
+                <div id="interactive" class="w-full h-44"></div>
+                <button type="button" onclick="stopScanner()" class="w-full mt-1 bg-rose-600 text-white text-[11px] font-bold py-1.5 rounded-lg">Desligar Câmera</button>
+            </div>
+
+            <form id="equip-form" onsubmit="handleFormSubmit(event)" class="space-y-3">
+                <input type="hidden" id="edit-index" value="">
+                <div class="relative">
+                    <input type="text" id="serial" required placeholder="Nº de Série / Identificador do Card" class="w-full bg-black border border-[#242736] rounded-xl pl-3 pr-10 py-2.5 text-sm text-white focus:outline-none focus:border-nu-purple">
+                    <button type="button" onclick="startScanner()" class="absolute inset-y-0 right-0 px-3 flex items-center text-nu-purple hover:text-white transition">
+                        <i data-lucide="camera" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <select id="model" required class="w-full bg-black border border-[#242736] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-nu-purple">
+                    <option value="">Selecione o Modelo:</option>
+                    <optgroup label="~•~•~•~• HFC •~•~•~•~">
+                        <option value="3.0 DUAL BAND">3.0 DUAL BAND</option>
+                        <option value="3.1">3.1</option>
+                        <option value="3.1 WI-FI 6">3.1 WI-FI 6</option>
+                        <option value="DECODER">DECODER</option>
+                        <option value="4K ANTIGO">4K ANTIGO</option>
+                    </optgroup>
+                    <optgroup label="~•~•~•~• GPON •~•~•~•~">
+                        <option value="ONT 350M">ONT 350M</option>
+                        <option value="ONT 750M-1G">ONT 750M-1G</option>
+                        <option value="ONT ZTE GIGALIZADA">ONT ZTE GIGALIZADA</option>
+                        <option value="TV BOX STREAMING">TV BOX STREAMING</option>
+                        <option value="SOUND BOX">SOUND BOX</option>
+                    </optgroup>
+                </select>
+
+                <select id="status" onchange="adjustFormFields()" class="w-full bg-black border border-[#242736] rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-nu-purple">
+                    <option value="Em Estoque">Disponível no Carro </option>
+                    <option value="Instalado">Instalado (Sair da Carteira)</option>
+                    <option value="Com Defeito">Com Defeito</option>
+                    <option value="Transferido">Transferido</option>
+                </select>
+
+                <div id="dynamic-fields" class="space-y-3 hidden bg-black p-3 rounded-xl border border-[#242736]"></div>
+
+                <div class="flex gap-2">
+                    <button type="button" onclick="clearForm()" class="w-1/3 bg-[#1c1e29] hover:bg-slate-800 text-slate-300 text-xs font-bold py-2.5 rounded-full transition">Limpar</button>
+                    <button type="submit" class="w-2/3 bg-nu-purple hover:hover-nu-purple text-white text-sm font-bold py-2.5 rounded-full transition shadow-md">
+                        Confirmar Registro
+                    </button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <div id="fullscreen-modal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
+        <header class="bg-[#11121a] px-4 py-4 border-b border-[#242736] flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <button onclick="closeModalView()" class="p-1 hover:bg-slate-800 rounded-full text-nu-purple">
+                    <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                </button>
+                <h2 id="modal-title" class="text-base font-bold text-white">Extrato de Dados</h2>
+            </div>
+            <span id="modal-counter" class="text-xs text-slate-500 font-mono">0 itens</span>
+        </header>
+
+        <div class="p-4 bg-black border-b border-[#1c1e29]">
+            <div class="relative">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </span>
+                <input type="text" id="modal-search" oninput="renderModalContent()" placeholder="Buscar por nome, contrato, serial ou MAC..." class="w-full bg-[#11121a] border border-[#242736] rounded-xl pl-9 pr-4 py-2.5 text-sm text-white focus:outline-none focus:border-nu-purple">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-black no-scrollbar" id="modal-list-container"></div>
+    </div>
+
+    <div class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-[#1c1e29]/95 backdrop-blur-md px-6 py-3 rounded-full flex items-center gap-8 shadow-2xl border border-slate-800/50 z-40">
+        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="text-nu-purple flex flex-col items-center" title="Ir para o topo"><i data-lucide="arrow-up-right" class="w-5 h-5"></i></button>
+        <button onclick="openModalView('stock')" class="text-slate-400 hover:text-white flex flex-col items-center" title="Ver Mala do Carro"><i data-lucide="package" class="w-5 h-5"></i></button>
+        <button onclick="openModalView('atendimentos')" class="text-slate-400 hover:text-white flex flex-col items-center" title="Ver Atendimentos"><i data-lucide="history" class="w-5 h-5"></i></button>
+    </div>
+
+    <script>
+        let state = {
+            techName: "Técnico Claro",
+            dateInicio: "",
+            dateActual: "",
+            equipamentos: []
+        };
+
+        let currentModalMode = 'stock';
+        let html5QrCode = null;
+
+        const initialMockups = [
+            { 
+                serial: "743AEF339509", 
+                model: "3.1", 
+                status: "Instalado", 
+                timestamp: "2026-06-03 17:27", 
+                meta: { 
+                    cliente: "ORLANDO JOSE PESO", 
+                    contrato: "027 / 195179926", 
+                    cpf: "193.760.231-00",
+                    telefone: "(82) 98888-7777", 
+                    email: "orlando.peso@email.com",
+                    wifiName: "Claro_Orlando_2G",
+                    wifiPass: "peso2026orlando",
+                    devices: [
+                        { type: "router", label: "3.1 HFC - Velocidade: <span class='bg-purple-900 text-purple-300 text-[10px] px-1.5 py-0.5 rounded font-bold ml-1'>600M</span>", mac: "C8:C7:35:A8:77:09" },
+                        { type: "tv", label: "TV BOX STREAMING", mac: "21:13:25:78:78:99" }
+                    ]
+                } 
+            },
+            { serial: "23489102441", model: "3.1 WI-FI 6", status: "Em Estoque", timestamp: "2026-06-03 08:00", meta: {} }
+        ];
+
+        // Inicializador Blindado do Lucide para prevenir travamento do Script completo
+        function safeRefreshIcons() {
+            try {
+                if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                    lucide.createIcons();
+                }
+            } catch (err) {
+                console.warn("Aviso: Lucide falhou em renderizar um ou mais ícones dinâmicos.", err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setInterval(() => {
+                const d = new Date();
+                const clock = document.getElementById('clock-display');
+                if (clock) clock.innerText = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+            }, 1000);
+
+            if (localStorage.getItem('nucontrol_bank_v4')) {
+                try {
+                    state = JSON.parse(localStorage.getItem('nucontrol_bank_v4'));
+                } catch(e) {
+                    state.equipamentos = initialMockups;
+                }
+            } else {
+                state.equipamentos = initialMockups;
+                state.dateInicio = "2026-06-03 08:00";
+                state.dateActual = getNowString();
+                save();
+            }
+            updateUI();
+            adjustFormFields();
+            safeRefreshIcons();
+        });
+
+        function getNowString() {
+            const now = new Date();
+            const pad = (n) => n.toString().padStart(2, '0');
+            return `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        }
+
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) sidebar.classList.toggle('-translate-x-full');
+        }
+
+        function saveProfile() {
+            const input = document.getElementById('tech-name-input');
+            state.techName = input ? (input.value.trim() || "Técnico Claro") : "Técnico Claro";
+            save(); updateUI(); toggleMenu();
+        }
+
+        function save() {
+            localStorage.setItem('nucontrol_bank_v4', JSON.stringify(state));
+        }
+
+        function startScanner() {
+            document.getElementById('scanner-container').classList.remove('hidden');
+            html5QrCode = new Html5Qrcode("interactive");
+            const config = { fps: 15, qrbox: { width: 260, height: 130 } };
+            
+            html5QrCode.start({ facingMode: "environment" }, config, (text) => {
+                document.getElementById('serial').value = text;
+                stopScanner();
+            }).catch(err => {
+                console.warn("Falha ao abrir câmera: ", err);
+                alert("Verifique as permissões de câmera do navegador.");
+            });
+        }
+
+        function stopScanner() {
+            if (html5QrCode) {
+                html5QrCode.stop().then(() => {
+                    document.getElementById('scanner-container').classList.add('hidden');
+                }).catch(err => console.log(err));
+            }
+        }
+
+        function updateUI() {
+            const profileDisplay = document.getElementById('profile-name-display');
+            const nameInput = document.getElementById('tech-name-input');
+            const dateIn = document.getElementById('menu-date-in');
+            const dateAct = document.getElementById('menu-date-act');
+            const stockMain = document.getElementById('stock-count-main');
+
+            if (profileDisplay) profileDisplay.innerText = `Olá, ${state.techName}`;
+            if (nameInput) nameInput.value = state.techName;
+            if (dateIn) dateIn.innerText = `Início dos Registros: ${state.dateInicio || '--/--/--'}`;
+            if (dateAct) dateAct.innerText = `Última Atualização: ${state.dateActual || '--/--/--'}`;
+
+            const estoque = (state.equipamentos || []).filter(e => e.status === 'Em Estoque');
+            if (stockMain) stockMain.innerText = `${estoque.length} Equipamento${estoque.length !== 1 ? 's' : ''}`;
+
+            const badgeDual = document.getElementById('badge-dual');
+            const badgeDecoder = document.getElementById('badge-decoder');
+            const badgeOnt350 = document.getElementById('badge-ont350');
+            const badgeOntGiga = document.getElementById('badge-ontgiga');
+
+            if (badgeDual) badgeDual.innerText = estoque.filter(e => e.model && e.model.includes('DUAL BAND')).length;
+            if (badgeDecoder) badgeDecoder.innerText = estoque.filter(e => e.model && (e.model === 'DECODER' || e.model.includes('4K'))).length;
+            if (badgeOnt350) badgeOnt350.innerText = estoque.filter(e => e.model === 'ONT 350M').length;
+            if (badgeOntGiga) badgeOntGiga.innerText = estoque.filter(e => e.model && (e.model.includes('GIGALIZADA') || e.model.includes('1G'))).length;
+
+            const instalados = (state.equipamentos || []).filter(e => e.status === 'Instalado');
+            const lastClient = document.getElementById('last-client-display');
+            const lastContract = document.getElementById('last-contract-display');
+
+            if (instalados.length > 0) {
+                const ultimo = instalados[instalados.length - 1];
+                if (lastClient) lastClient.innerText = (ultimo.meta && ultimo.meta.cliente) ? ultimo.meta.cliente : "Cliente sem Nome";
+                if (lastContract) lastContract.innerText = (ultimo.meta && ultimo.meta.contrato) ? `Contrato: ${ultimo.meta.contrato}` : 'N/A';
+            } else {
+                if (lastClient) lastClient.innerText = "Nenhum cliente recente";
+                if (lastContract) lastContract.innerText = "Clique para abrir o extrato de ordens de serviço";
+            }
+        }
+
+        function adjustFormFields() {
+            const statusEl = document.getElementById('status');
+            if (!statusEl) return;
+            const status = statusEl.value;
+            const container = document.getElementById('dynamic-fields');
+            if (!container) return;
+            
+            if (status === 'Instalado') {
+                container.classList.remove('hidden');
+                container.innerHTML = `
+                    <input type="text" id="meta-contrato" placeholder="Contrato (Ex: 027 / 195179926)" required class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple">
+                    <input type="text" id="meta-cliente" placeholder="Nome Completo do Assinante" required class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple">
+                    <input type="text" id="meta-cpf" placeholder="CPF do Cliente" class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple">
+                    <input type="text" id="meta-telefone" placeholder="Telefone de Contato" class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple">
+                    <input type="email" id="meta-email" placeholder="E-mail do Assinante" class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple">
+                    <div class="border-t border-[#242736] pt-2 mt-2">
+                        <label class="text-[11px] text-purple-400 font-bold block mb-1">DADOS DO WI-FI</label>
+                        <input type="text" id="meta-wifi-name" placeholder="Nome da Rede Wi-Fi (Login)" class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple mb-2">
+                        <input type="text" id="meta-wifi-pass" placeholder="Senha do Wi-Fi" class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple">
+                    </div>
+                    <div class="border-t border-[#242736] pt-2 mt-2">
+                        <label class="text-[11px] text-slate-400 block mb-1">VINCULAR DISPOSITIVOS (MACS)</label>
+                        <input type="text" id="meta-mac-modem" placeholder="MAC do Modem principal" class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple mb-2">
+                        <input type="text" id="meta-mac-tv" placeholder="MAC da TV Box / Decoder (Opcional)" class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple">
+                    </div>
+                `;
+            } else if (status === 'Com Defeito') {
+                container.classList.remove('hidden');
+                container.innerHTML = `
+                    <input type="text" id="meta-defect" placeholder="Descreva o defeito apresentado" required class="w-full bg-[#0c0d12] border border-[#242736] rounded-xl px-3 py-2 text-xs text-white focus:border-nu-purple">
+                `;
+            } else {
+                container.classList.add('hidden');
+                container.innerHTML = '';
+            }
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            const indexEl = document.getElementById('edit-index');
+            const serialEl = document.getElementById('serial');
+            const modelEl = document.getElementById('model');
+            const statusEl = document.getElementById('status');
+
+            if(!serialEl || !modelEl || !statusEl) return;
+
+            const index = indexEl ? indexEl.value : "";
+            const serial = serialEl.value.trim();
+            const model = modelEl.value;
+            const status = statusEl.value;
+            
+            let meta = {};
+            if (status === 'Instalado') {
+                const devices = [];
+                const macModem = document.getElementById('meta-mac-modem') ? document.getElementById('meta-mac-modem').value.trim() : "";
+                const macTv = document.getElementById('meta-mac-tv') ? document.getElementById('meta-mac-tv').value.trim() : "";
+                
+                if(macModem) devices.push({ type: 'router', label: `${model} HFC - Velocidade: <span class='bg-purple-900 text-purple-300 text-[10px] px-1.5 py-0.5 rounded font-bold ml-1'>600M</span>`, mac: macModem });
+                if(macTv) devices.push({ type: 'tv', label: 'TV BOX STREAMING', mac: macTv });
+
+                meta = {
+                    contrato: document.getElementById('meta-contrato') ? document.getElementById('meta-contrato').value.trim() : "",
+                    cliente: document.getElementById('meta-cliente') ? document.getElementById('meta-cliente').value.trim().toUpperCase() : "",
+                    cpf: document.getElementById('meta-cpf') ? document.getElementById('meta-cpf').value.trim() : "",
+                    telefone: document.getElementById('meta-telefone') ? document.getElementById('meta-telefone').value.trim() : "",
+                    email: document.getElementById('meta-email') ? document.getElementById('meta-email').value.trim() : "",
+                    wifiName: document.getElementById('meta-wifi-name') ? document.getElementById('meta-wifi-name').value.trim() : "",
+                    wifiPass: document.getElementById('meta-wifi-pass') ? document.getElementById('meta-wifi-pass').value.trim() : "",
+                    devices: devices
+                };
+            } else if (status === 'Com Defeito') {
+                meta = { defect: document.getElementById('meta-defect') ? document.getElementById('meta-defect').value.trim() : "" };
+            }
+
+            const itemData = {
+                serial: serial,
+                model: model,
+                status: status,
+                timestamp: getNowString(),
+                meta: meta
+            };
+
+            if (index !== "") {
+                state.equipamentos[parseInt(index)] = itemData;
+            } else {
+                state.equipamentos.push(itemData);
+            }
+
+            state.dateActual = getNowString();
+            save();
+            updateUI();
+            clearForm();
+            alert("Movimentação registrada com sucesso!");
+        }
+
+        function clearForm() {
+            const indexEl = document.getElementById('edit-index');
+            if(indexEl) indexEl.value = "";
+            const form = document.getElementById('equip-form');
+            if(form) form.reset();
+            adjustFormFields();
+        }
+
+        function openModalView(mode) {
+            currentModalMode = mode;
+            const modal = document.getElementById('fullscreen-modal');
+            const searchEl = document.getElementById('modal-search');
+            const titleEl = document.getElementById('modal-title');
+
+            if(modal) modal.classList.remove('hidden');
+            if(searchEl) searchEl.value = "";
+            
+            if (titleEl) {
+                titleEl.innerText = mode === 'stock' ? "Mala do Carro (Disponíveis)" : "Extrato de Ordens de Serviço";
+            }
+            renderModalContent();
+        }
+
+        function closeModalView() {
+            const modal = document.getElementById('fullscreen-modal');
+            if(modal) modal.classList.add('hidden');
+        }
+
+        function renderModalContent() {
+            const searchEl = document.getElementById('modal-search');
+            const container = document.getElementById('modal-list-container');
+            if(!container) return;
+            
+            const query = searchEl ? searchEl.value.toLowerCase().trim() : "";
+            container.innerHTML = "";
+
+            let filtered = (state.equipamentos || []).filter(e => {
+                if (currentModalMode === 'stock') return e.status === 'Em Estoque';
+                return e.status !== 'Em Estoque';
+            });
+
+            if (query !== "") {
+                filtered = filtered.filter(e => {
+                    const matchSerial = e.serial ? e.serial.toLowerCase().includes(query) : false;
+                    const matchModel = e.model ? e.model.toLowerCase().includes(query) : false;
+                    const matchCliente = (e.meta && e.meta.cliente) ? e.meta.cliente.toLowerCase().includes(query) : false;
+                    const matchContrato = (e.meta && e.meta.contrato) ? e.meta.contrato.toLowerCase().includes(query) : false;
+                    const matchMac = (e.meta && e.meta.devices) ? e.meta.devices.some(d => d.mac && d.mac.toLowerCase().includes(query)) : false;
+                    return matchSerial || matchModel || matchCliente || matchContrato || matchMac;
+                });
+            }
+
+            const counter = document.getElementById('modal-counter');
+            if(counter) counter.innerText = `${filtered.length} item${filtered.length !== 1 ? 's' : ''}`;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class='text-center text-slate-500 text-sm mt-8 py-4'>Nenhum registro localizado.</div>`;
+                return;
+            }
+
+            filtered.forEach(item => {
+                const globalIndex = state.equipamentos.findIndex(e => e.serial === item.serial && e.timestamp === item.timestamp);
+                const div = document.createElement('div');
+                
+                if (item.status === 'Instalado') {
+                    let devicesHtml = "";
+                    if (item.meta && item.meta.devices && item.meta.devices.length > 0) {
+                        item.meta.devices.forEach(dev => {
+                            const icon = dev.type === 'tv' ? 'tv' : 'wifi';
+                            devicesHtml += `
+                                <div class="bg-[#0c0d12] border border-[#242736] p-3 rounded-xl flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2 bg-purple-900/20 text-nu-purple rounded-lg">
+                                            <i data-lucide="${icon}" class="w-5 h-5"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-[11px] text-slate-400 flex items-center">Mac: <span class="text-white font-mono ml-1 uppercase">${dev.mac}</span></div>
+                                            <div class="text-xs font-bold text-slate-200 mt-0.5">${dev.label}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+
+                    let wifiCredentialsHtml = "";
+                    if (item.meta && (item.meta.wifiName || item.meta.wifiPass)) {
+                        wifiCredentialsHtml += `
+                            <div class="bg-purple-900/10 border border-purple-900/40 p-3 rounded-xl mt-2 space-y-1">
+                                <div class="text-[10px] text-purple-400 font-bold tracking-wider uppercase">Acesso Wi-Fi Configurado</div>
+                                <div class="text-xs text-slate-200"><strong>Rede (Login):</strong> ${item.meta.wifiName || 'Não Informado'}</div>
+                                <div class="text-xs text-slate-200"><strong>Senha:</strong> <span class="font-mono bg-black/40 px-1 rounded">${item.meta.wifiPass || 'Não Informado'}</span></div>
+                            </div>
+                        `;
+                    }
+
+                    div.className = "bg-[#11121a] border border-[#242736] rounded-2xl p-4 space-y-4 shadow-xl relative";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-lg font-bold text-white tracking-wide uppercase font-mono">${item.serial || 'N/A'}</h3>
+                                <p class="text-xs text-slate-400 font-medium">${item.model || ''}</p>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <span class="bg-emerald-950 text-emerald-400 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-800/50">Instalado</span>
+                                <div class="flex items-center gap-2 text-slate-400">
+                                    <button onclick="editItem(${globalIndex})" class="p-1 hover:text-nu-purple hover:bg-slate-800 rounded-lg transition"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                                    <button onclick="deleteItem(${globalIndex})" class="p-1 hover:text-rose-500 hover:bg-slate-800 rounded-lg transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#1c1e29]/50 border border-[#242736] rounded-xl p-3.5">
+                            <span class="text-[10px] text-slate-500 font-semibold block uppercase tracking-wider">Contrato:</span>
+                            <div class="text-xl font-bold text-white tracking-wide mt-0.5">${(item.meta && item.meta.contrato) ? item.meta.contrato : 'N/A'}</div>
+                        </div>
+
+                        <div class="space-y-2.5">
+                            <div class="text-[11px] font-bold text-nu-purple uppercase tracking-wider border-b border-[#1c1e29] pb-1">Dados Pessoais</div>
+                            
+                            <div class="flex items-center gap-3 text-xs">
+                                <i data-lucide="user" class="w-4 h-4 text-nu-purple"></i>
+                                <div class="text-slate-400 flex-1">Assinante: <span class="text-slate-200 font-semibold ml-1">${(item.meta && item.meta.cliente) ? item.meta.cliente : 'N/A'}</span></div>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs">
+                                <i data-lucide="credit-card" class="w-4 h-4 text-nu-purple"></i>
+                                <div class="text-slate-400 flex-1">CPF: <span class="text-slate-200 font-mono ml-1">${(item.meta && item.meta.cpf) ? item.meta.cpf : 'N/A'}</span></div>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs">
+                                <i data-lucide="phone" class="w-4 h-4 text-nu-purple"></i>
+                                <div class="text-slate-400 flex-1">Telefone: <span class="text-slate-200 ml-1">${(item.meta && item.meta.telefone) ? item.meta.telefone : 'N/A'}</span></div>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs">
+                                <i data-lucide="mail" class="w-4 h-4 text-nu-purple"></i>
+                                <div class="text-slate-400 flex-1">Email: <span class="text-slate-200 ml-1 font-mono">${(item.meta && item.meta.email) ? item.meta.email : 'N/A'}</span></div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="text-[11px] font-bold text-nu-purple uppercase tracking-wider border-b border-[#1c1e29] pb-1">Assinatura</div>
+                            <div class="space-y-2">${devicesHtml || '<p class="text-xs text-slate-500">Nenhum MAC vinculado.</p>'}</div>
+                            ${wifiCredentialsHtml}
+                        </div>
+
+                        <div class="text-[10px] text-right text-slate-600 font-mono pt-1">Lançamento: ${item.timestamp}</div>
+                    `;
+                } else {
+                    const isDefect = item.status === 'Com Defeito';
+                    div.className = "bg-[#11121a] border border-[#242736] rounded-xl p-4 flex flex-col justify-between shadow-md";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <span class="text-xs font-mono font-bold text-slate-400 uppercase">${item.serial || 'N/A'}</span>
+                                <h4 class="text-sm font-bold text-white">${item.model || ''}</h4>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] px-2 py-0.5 rounded-full font-bold ${isDefect ? 'bg-rose-950 text-rose-400 border border-rose-900' : 'bg-purple-950 text-nu-purple border border-purple-900'}">${item.status}</span>
+                                <button onclick="editItem(${globalIndex})" class="text-slate-400 hover:text-white p-1"><i data-lucide="edit-2" class="w-3.5 h-3.5"></i></button>
+                                <button onclick="deleteItem(${globalIndex})" class="text-slate-400 hover:text-rose-500 p-1"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </div>
+                        ${isDefect ? `<div class='text-xs bg-rose-950/20 text-rose-300 border border-rose-900/40 p-2 rounded-lg mb-2'><strong>Defeito:</strong> ${(item.meta && item.meta.defect) ? item.meta.defect : ''}</div>` : ''}
+                        <div class="text-[9px] text-slate-500 font-mono">Movimentado em: ${item.timestamp}</div>
+                    `;
+                }
+                container.appendChild(div);
+            });
+            safeRefreshIcons();
+        }
+
+        function editItem(index) {
+            closeModalView();
+            const form = document.getElementById('equip-form');
+            if(form) window.scrollTo({top: form.offsetTop - 20, behavior: 'smooth'});
+            
+            const item = state.equipamentos[index];
+            if(!item) return;
+
+            const editIdx = document.getElementById('edit-index');
+            const serialEl = document.getElementById('serial');
+            const modelEl = document.getElementById('model');
+            const statusEl = document.getElementById('status');
+
+            if(editIdx) editIdx.value = index;
+            if(serialEl) serialEl.value = item.serial || "";
+            if(modelEl) modelEl.value = item.model || "";
+            if(statusEl) statusEl.value = item.status || "Em Estoque";
+            
+            adjustFormFields();
+
+            if (item.status === 'Instalado' && item.meta) {
+                if(document.getElementById('meta-contrato')) document.getElementById('meta-contrato').value = item.meta.contrato || '';
+                if(document.getElementById('meta-cliente')) document.getElementById('meta-cliente').value = item.meta.cliente || '';
+                if(document.getElementById('meta-cpf')) document.getElementById('meta-cpf').value = item.meta.cpf || '';
+                if(document.getElementById('meta-telefone')) document.getElementById('meta-telefone').value = item.meta.telefone || '';
+                if(document.getElementById('meta-email')) document.getElementById('meta-email').value = item.meta.email || '';
+                if(document.getElementById('meta-wifi-name')) document.getElementById('meta-wifi-name').value = item.meta.wifiName || '';
+                if(document.getElementById('meta-wifi-pass')) document.getElementById('meta-wifi-pass').value = item.meta.wifiPass || '';
+                
+                if (item.meta.devices) {
+                    const modem = item.meta.devices.find(d => d.type === 'router');
+                    const tv = item.meta.devices.find(d => d.type === 'tv');
+                    if(modem && document.getElementById('meta-mac-modem')) document.getElementById('meta-mac-modem').value = modem.mac || '';
+                    if(tv && document.getElementById('meta-mac-tv')) document.getElementById('meta-mac-tv').value = tv.mac || '';
+                }
+            } else if (item.status === 'Com Defeito' && item.meta) {
+                if(document.getElementById('meta-defect')) document.getElementById('meta-defect').value = item.meta.defect || '';
+            }
+        }
+
+        function deleteItem(index) {
+            if (confirm("Tem certeza que deseja excluir em definitivo este registro?")) {
+                state.equipamentos.splice(index, 1);
+                state.dateActual = getNowString();
+                save();
+                updateUI();
+                renderModalContent();
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `nucontrol_backup_${getNowString().replace(/[: ]/g, '_')}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedState = JSON.parse(e.target.result);
+                    if (importedState.equipamentos) {
+                        state = importedState;
+                        save();
+                        updateUI();
+                        alert("Backup restaurado com sucesso!");
+                        const modal = document.getElementById('fullscreen-modal');
+                        if(modal && !modal.classList.contains('hidden')) renderModalContent();
+                    } else {
+                        alert("Arquivo JSON inválido.");
+                    }
+                } catch (err) {
+                    alert("Erro ao processar o arquivo.");
+                }
+            };
+            reader.readAsText(file);
+        }
+    </script>
+</body>
+</html>
