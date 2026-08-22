@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Explora Tour | Excursões Inesquecíveis</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Poppins', sans-serif; }
+    .blob {
+      border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+    }
+    .posterbg{
+       opacity: 25%;
+       width: 100%;
+       display: block;
+       position:fixed;
+       z-index: -1;
+    }
+  </style>
+</head>
+<body class="bg-[#FFF9F0] text-gray-800">
+    <div>
+        <video  autoplay muted loop playsinline class="posterbg" style="width: 100%; height: auto;">
+    <source src="./banner1.mp4" type="video/mp4">
+    Seu navegador não suporta vídeos em HTML5.
+</video>
+       <!-- <img class="posterbg"; src="./background.jpg" 
+                alt="Grupo em excursão" 
+                class="rounded-full w-full h-auto object-cover"> -->
+    </div>
+  <!-- Navbar -->
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="text-2xl font-bold text-orange-500">
+        BORA<span class="text-yellow-500">Trip</span>
+      </div>
+      <div class="hidden md:flex space-x-8 font-medium">
+        <a href="#home" class="text-orange-500 border-b-2 border-orange-500">Home</a>
+        <a href="#destinos" class="hover:text-orange-500">Destinos</a>
+        <a href="#sobre" class="hover:text-orange-500">Sobre</a>
+        <a href="#servicos" class="hover:text-orange-500">Serviços</a>
+        <a href="#depoimentos" class="hover:text-orange-500">Depoimentos</a>
+        <a href="#contato" class="hover:text-orange-500">Contato</a>
+      </div>
+      <a href="#contato" class="bg-orange-500 text-xs text-white px-6 py-2.5 rounded-full font-medium hover:bg-orange-600 transition">
+        Área de Membros →
+      </a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section id="home" class="max-w-7xl mx-auto px-10 py-16 grid md:grid-cols-2 gap-12 items-center">
+    <div>
+      
+      <h1 class="text-2xl md:text-6xl font-extrabold leading-tight mb-8">
+        Transformamos<br>
+        <span class="text-orange-500">dias normais</span> em<br>
+        <span class="text-yellow-500">belos passeios</span>
+      </h1>
+      <p class="text-sm text-gray-600 mt-12 mb-8 max-w-md">
+        Excursões planejadas com carinho, segurança e muita dopamina. Agende seu passeio! 
+      </p>
+      <div class="flex flex-wrap gap-4 mb-8 text-sm" >
+        <a href="#destinos" class="bg-orange-500 text-white px-8 py-3.5 rounded-full font-semibold hover:bg-orange-600 transition flex items-center gap-2">
+          Ver Destinos →
+        </a>
+        <a href="#sobre" class="border-2 border-orange-500 text-orange-500 px-8 py-3.5 rounded-full font-semibold hover:bg-orange-50 transition">
+          Sobre Nós
+        </a>
+      </div>
+      <div class="flex items-center gap-4  bg-red-100 text-sm text-gray-500">
+        <span>Siga-nos:</span>
+        <a href="#" class="hover:text-orange-500">Instagram</a>
+        <a href="#" class="hover:text-orange-500">Facebook</a>
+        <a href="#" class="hover:text-orange-500">WhatsApp</a>
+      </div>
+    </div>
+
+    <div >
+      <!-- <div class="bg-gradient-to-br from-orange-400 to-yellow-300 rounded-full blob p-2 shadow-2xl">
+        <img src="logo.jpg" 
+             alt="Grupo em excursão" 
+             class="rounded-full w-full h-auto object-cover">
+      </div>
+      <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-lg max-w-[200px]">
+        <p class="text-sm font-medium">Viajando com alma, explorando com segurança</p>
+      </div> -->
+    </div>
+  </section>
+
+  
+  <!-- Destinos em Destaque -->
+  <section id="destinos" class="max-w-7xl mx-auto px-6 py-20">
+    <div class="flex justify-between items-end mb-12">
+      <div>
+        <div class="inline-block bg-yellow-200 text-orange-700 px-4 py-1 rounded-full text-sm font-medium mb-4">
+          DESTINOS EM DESTAQUE
+        </div>
+        <h2 class="text-4xl font-bold">Alguns lugares que amamos 💖</h2>
+      </div>
+      <a href="#" class="hidden md:inline-flex items-center gap-2 text-orange-500 font-medium hover:underline">
+        Ver todos os destinos →
+      </a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <!-- Card 1 -->
+      <div class="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
+        <img src="https://saopauloparacriancas.com.br/wp-content/uploads/2017/07/sp_criancas_passeio_hopi_hari_ferias_03.jpg" class="w-full h-48 object-cover">
+        <div class="p-5">
+          <h3 class="font-bold text-lg">Hopi Hari</h3>
+          <p class="text-sm text-gray-500 mt-1">Bate e Volta<br>Saída: 7:00h • Chegada: 17:00h </p>
+          <p class="text-orange-500 font-semibold mt-3">A partir de R$ 1.890</p>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
+        <img src="https://images.unsplash.com/photo-1516306580123-e6e52b1b7b5f?w=400&h=300&fit=crop" class="w-full h-48 object-cover">
+        <div class="p-5">
+          <h3 class="font-bold text-lg">Fernando de Noronha</h3>
+          <p class="text-sm text-gray-500 mt-1">Pernambuco • 6 dias</p>
+          <p class="text-orange-500 font-semibold mt-3">A partir de R$ 4.290</p>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
+        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=300&fit=crop" class="w-full h-48 object-cover">
+        <div class="p-5">
+          <h3 class="font-bold text-lg">Lençóis Maranhenses</h3>
+          <p class="text-sm text-gray-500 mt-1">Maranhão • 4 dias</p>
+          <p class="text-orange-500 font-semibold mt-3">A partir de R$ 2.450</p>
+        </div>
+      </div>
+      <!-- Card 4 -->
+      <div class="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition">
+        <img src="https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&h=300&fit=crop" class="w-full h-48 object-cover">
+        <div class="p-5">
+          <h3 class="font-bold text-lg">Buenos Aires + Patagônia</h3>
+          <p class="text-sm text-gray-500 mt-1">Argentina • 10 dias</p>
+          <p class="text-orange-500 font-semibold mt-3">A partir de R$ 6.890</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sobre -->
+  <section id="sobre" class="max-w-7xl mx-auto px-6 py-20">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+      <div class="relative">
+        <img src="logo.jpg" 
+             alt="Guia de turismo" 
+             class="rounded-3xl shadow-xl w-full">
+      </div>
+      <div>
+        <div class="inline-block bg-yellow-200 text-orange-700 px-4 py-1 rounded-full text-sm font-medium mb-4">
+          SOBRE NÓS
+        </div>
+        <h2 class="text-4xl font-bold mb-4">Olá, somos a BORA Trip</h2>
+        <p class="text-gray-600 mb-8 leading-relaxed">
+          <b>Somos uma agência especializada em excursões e passeios locais e regionais</b>, situada na Baixada Santista.
+<br><br>
+Em meio a uma sociedade consumista, acreditamos que novos habitos, novos ambientes podem proporcionar alem de novas ideias, sorrisos genuínos!<b> Em vez de gastar com coisas que logo perdem o valor, que tal investir em momentos, diversão e boas memórias?</b>
+<br><br>
+Planejamos roteiros com cuidado, buscamos proporcionar segurança, organização e muita diversão.
+<b><br><br>
+Não compre coisas que você vai esquecer. Viva experiências que você vai lembrar.
+</b><br>
+
+        </p>
+        <div class="grid grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="text-3xl font-bold text-orange-500">12+</div>
+            <div class="text-sm text-gray-500">Anos de Experiência</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-orange-500">850+</div>
+            <div class="text-sm text-gray-500">Excursões Realizadas</div>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-bold text-orange-500">15k+</div>
+            <div class="text-sm text-gray-500">Viajantes Felizes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Serviços -->
+  <section id="servicos" class="bg-white py-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-14">
+        <div class="inline-block bg-yellow-200 text-orange-700 px-4 py-1 rounded-full text-sm font-medium mb-4">
+          O QUE FAZEMOS
+        </div>
+        <h2 class="text-4xl font-bold">Nossos Serviços</h2>
+      </div>
+
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="bg-[#FFF9F0] p-8 rounded-3xl text-center hover:shadow-xl transition">
+          <div class="text-4xl mb-4">🚌</div>
+          <h3 class="text-xl font-bold mb-2">Parques de Diversões</h3>
+          <p class="text-gray-600 text-sm">Roteiros pelo Brasil com conforto e segurança</p>
+        </div>
+        <div class="bg-[#FFF9F0] p-8 rounded-3xl text-center hover:shadow-xl transition">
+          <div class="text-4xl mb-4">🚌</div>
+          <h3 class="text-xl font-bold mb-2">Pontos Turisticos</h3>
+          <p class="text-gray-600 text-sm"> Excursões em Datas Especiais </p>
+        </div>
+        <div class="bg-[#FFF9F0] p-8 rounded-3xl text-center hover:shadow-xl transition">
+          <div class="text-4xl mb-4">🎒</div>
+          <h3 class="text-xl font-bold mb-2">Turismo Educacional</h3>
+          <p class="text-gray-600 text-sm">Destinos exclusivos para estudantes</p>
+        </div>
+        <div class="bg-[#FFF9F0] p-8 rounded-3xl text-center hover:shadow-xl transition">
+          <div class="text-4xl mb-4">👥</div>
+          <h3 class="text-xl font-bold mb-2">Grupos & Corporativo</h3>
+          <p class="text-gray-600 text-sm">Viagens personalizadas para empresas</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills / Diferenciais -->
+  <section class="bg-gray-900 text-white py-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-4xl font-bold mb-4">O que nos torna especiais</h2>
+          <p class="text-gray-300 mb-8">
+            Combinação perfeita de planejamento, segurança e experiências autênticas.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <span class="bg-gray-800 px-4 py-2 rounded-full text-sm">Roteiros Exclusivos</span>
+            <span class="bg-gray-800 px-4 py-2 rounded-full text-sm">Guias Locais</span>
+            <span class="bg-gray-800 px-4 py-2 rounded-full text-sm">Seguro Viagem</span>
+            <span class="bg-gray-800 px-4 py-2 rounded-full text-sm">Grupos Reduzidos</span>
+            <span class="bg-gray-800 px-4 py-2 rounded-full text-sm">Suporte 24h</span>
+            <span class="bg-gray-800 px-4 py-2 rounded-full text-sm">Sustentabilidade</span>
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-6 text-center">
+          <div>
+            <div class="text-3xl mb-2">🛡️</div>
+            <div class="font-medium">Segurança</div>
+          </div>
+          <div>
+            <div class="text-3xl mb-2">💚</div>
+            <div class="font-medium">Conforto</div>
+          </div>
+          <div>
+            <div class="text-3xl mb-2">🌟</div>
+            <div class="font-medium">Experiência</div>
+          </div>
+          <div>
+            <div class="text-3xl mb-2">📸</div>
+            <div class="font-medium">Fotos</div>
+          </div>
+          <div>
+            <div class="text-3xl mb-2">🚌</div>
+            <div class="font-medium">Transporte</div>
+          </div>
+          <div>
+            <div class="text-3xl mb-2">🍽️</div>
+            <div class="font-medium">Gastronomia</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Depoimentos -->
+  <section id="depoimentos" class="max-w-7xl mx-auto px-6 py-20">
+    <div class="text-center mb-14">
+      <div class="inline-block bg-yellow-200 text-orange-700 px-4 py-1 rounded-full text-sm font-medium mb-4">
+        DEPOIMENTOS
+      </div>
+      <h2 class="text-4xl font-bold">O que nossos viajantes dizem</h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+      <div class="bg-white p-8 rounded-3xl shadow-lg">
+        <div class="text-yellow-400 text-xl mb-4">★★★★★</div>
+        <p class="text-gray-600 mb-6">"A melhor excursão da minha vida! Organização impecável e guias incríveis."</p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-orange-200 rounded-full"></div>
+          <div>
+            <div class="font-semibold">Carla M.</div>
+            <div class="text-sm text-gray-500">São Paulo</div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white p-8 rounded-3xl shadow-lg">
+        <div class="text-yellow-400 text-xl mb-4">★★★★★</div>
+        <p class="text-gray-600 mb-6">"Profissionalismo e carinho em cada detalhe. Já estou planejando a próxima!"</p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-yellow-200 rounded-full"></div>
+          <div>
+            <div class="font-semibold">Roberto S.</div>
+            <div class="text-sm text-gray-500">Curitiba</div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white p-8 rounded-3xl shadow-lg">
+        <div class="text-yellow-400 text-xl mb-4">★★★★★</div>
+        <p class="text-gray-600 mb-6">"Experiência transformadora. Recomendo de olhos fechados!"</p>
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-orange-300 rounded-full"></div>
+          <div>
+            <div class="font-semibold">Ana Paula</div>
+            <div class="text-sm text-gray-500">Rio de Janeiro</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contato / CTA -->
+  <section id="contato" class="bg-gradient-to-r from-orange-500 to-yellow-400 py-20">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="text-white">
+          <h2 class="text-4xl md:text-5xl font-bold mb-4">Tem um destino<br>em mente?</h2>
+          <p class="text-xl opacity-90 mb-8">Vamos criar a viagem dos seus sonhos juntos!</p>
+          <div class="space-y-3 text-lg">
+            <p>📧 boratripadm@gmail.com</p>
+            <p>📱 (11) 99999-8888</p>
+            <p>📍 Praia Grande, SP - Brasil</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-8 rounded-3xl shadow-2xl">
+          <form class="space-y-5">
+            <div class="grid grid-cols-2 gap-4">
+              <input type="text" placeholder="Seu nome" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400">
+              <input type="email" placeholder="Seu e-mail" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400">
+            </div>
+            <input type="text" placeholder="Destino de interesse" class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400">
+            <textarea rows="4" placeholder="Conte-nos sobre a viagem dos seus sonhos..." class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-400"></textarea>
+            <button type="submit" class="w-full bg-orange-500 text-white py-4 rounded-xl font-semibold hover:bg-orange-600 transition">
+              Enviar Mensagem →
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-8">
+    <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="text-white font-bold text-xl">BORA<span class="text-yellow-400">Trip</span></div>
+      <div class="text-sm">
+        © 2027 BORA TRIP LTDA. Todos os direitos reservados.
+      </div>
+      <div class="flex gap-6 text-sm">
+        <a href="#" class="hover:text-white">Política de Privacidade</a>
+        <a href="#" class="hover:text-white">Termos de Uso</a>
+      </div>
+    </div>
+  </footer>
+
+  
+
+</body>
+</html>
